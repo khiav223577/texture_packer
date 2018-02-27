@@ -16,8 +16,12 @@ end
 SETTING = load_yaml('setting.yml')
 
 def exec_cmd(cmd)
-  puts cmd
-  puts `#{cmd}`
+  begin
+    puts cmd
+    puts `#{cmd}`
+  rescue => e
+    puts e
+  end
 end
 
 def write_to_file(path, content)
@@ -39,6 +43,10 @@ theme = base_dir_name[/[^_]+$/]
 dir_without_theme = base_dir_name[0...-(theme.size + 1)]
 
 content = File.read('packed.css')
+if File.exists?('packed_mobile.css')
+  content += File.read('packed_mobile.css')
+  $has_mobile = true
+end
 
 Dir['images/**/'].map{|s| s[/images\/(.*)\//, 1] }.compact.map{|s| "#{s.gsub('/', '-')}-" }.each do |path| #"images/aaa/bbb/ccc.png" => "aaa-bbb-"
   content.gsub!(path, path.gsub('-', '_')) #aaa-bbb => aaa_bbb
@@ -75,11 +83,13 @@ loop do
 end
 # data = {selector => {nil => 'xxx', ':disabeld' => 'xxx', '[m]' => 'xxx'}}
 output1 = "" #mixin的output
-output1 += get_mixin("#{base_dir_name}_sprite", "background-image: image-url('#{dir_name}.png')")
+output1 += get_mixin("#{base_dir_name}_sprite", "background-image: image-url('#{dir_name}.png');")
+output1 += get_mixin("#{base_dir_name}_sprite_m", "background-image: image-url('#{dir_name}_m.png');") if $has_mobile
 output2 = "" #scss的output
 output2 += "body[theme='#{theme}']{\n"
 output2 += "  .#{dir_without_theme}_sprite{\n"
 output2 += "    @include #{base_dir_name}_sprite();\n"
+output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m(); }}\n" if $has_mobile
 class CssRule
   def initialize
     @hash = {}
@@ -99,7 +109,7 @@ class CssRule
       when prefix[0] == ':'
         ["&#{prefix}, &.#{prefix[1..-1]}{ ", obj.generate_css, " }"]
       when prefix == '[m]'
-        ["@media(max-width: $mobile_width){ ", obj.generate_css, " }"]
+        ["@include mobile{ ", obj.generate_css, " }"]
       else
         ["&#{prefix}{ ", obj.generate_css, " }"]
       end
@@ -125,6 +135,7 @@ output = output0 + output1 + output2
 # ● 壓縮圖片
 # ----------------------------------------------------------------
 exec_cmd('pngquant packed.png --force')
+exec_cmd('pngquant packed_mobile.png --force') if $has_mobile
 write_to_file('packed.scss', output)
 
 # ----------------------------------------------------------------
@@ -139,6 +150,7 @@ if SETTING['project_dir']
   write_to_file(css_path.join('mixin.scss'), output1)
   write_to_file(css_path.join('ocean.scss'), "@import './mixin.scss';\n\n#{output2}")
   FileUtils.cp('packed-fs8.png', img_path.join(base_dir_name + '.png'))
+  FileUtils.cp('packed_mobile-fs8.png', img_path.join(base_dir_name + '_m.png'))
 end
 
 
