@@ -88,8 +88,13 @@ output1 += get_mixin("#{base_dir_name}_sprite_m", "background-image: image-url('
 output2 = "" #scss的output
 output2 += "body[theme='#{theme}']{\n"
 output2 += "  .#{dir_without_theme}_sprite{\n"
-output2 += "    @include #{base_dir_name}_sprite();\n"
-output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m(); }}\n" if $has_mobile
+if $has_mobile
+  output2 += "    @include desktop{ @include #{base_dir_name}_sprite(); }\n"
+  output2 += "    @include mobile{ @include #{base_dir_name}_sprite_m(); }\n"
+else
+  output2 += "    @include #{base_dir_name}_sprite();\n"
+end
+# output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m(); }}\n" if $has_mobile
 class CssRule
   def initialize
     @hash = {}
