@@ -54,7 +54,7 @@ end
 
 data = {}
 content.gsub!(/-disabled \{/, ':disabled {') #-disabled => :disabled
-content.gsub!(/-([\w]+)([^\w][\w]+|) \{/, '[\1]\2 {')
+loop{ break if content.gsub!(/-([\w]+)((?:[^\w][\w]+)*) \{/, '[\1]\2 {') == nil }
 output0 = content
 output0.sub!(/(\/\*(.|\n)*?\*\/)/, '') #去掉註解
 output0 = $1 + "\n"
