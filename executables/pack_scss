@@ -71,7 +71,7 @@ loop do
   break if selector == nil
   next if selector == "sprite"
   prefixs = prefix.scan(/\[\w+\]|\:\w+/) #[m]:disabled => ['[m]', ':disabled']
-  prefixs.map! do |prefix| 
+  prefixs.map! do |prefix|
     case prefix
     when '[active]' ; ':active' # 因為 TexturePacker 會把 xxx-active-hover 轉成 xxx-active:hover 而不是 xxx:active:hover
     when '[hover]' ; ':hover'
@@ -155,7 +155,7 @@ if SETTING['project_dir']
   write_to_file(css_path.join('mixin.scss'), output1)
   write_to_file(css_path.join('ocean.scss'), "@import './mixin.scss';\n\n#{output2}")
   FileUtils.cp('packed-fs8.png', img_path.join(base_dir_name + '.png'))
-  FileUtils.cp('packed_mobile-fs8.png', img_path.join(base_dir_name + '_m.png'))
+  FileUtils.cp('packed_mobile-fs8.png', img_path.join(base_dir_name + '_m.png')) if $has_mobile
 end
 
 
