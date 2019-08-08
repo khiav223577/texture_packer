@@ -34,6 +34,12 @@ def get_mixin(func, css)
   return "@mixin #{func}{ #{css} }\n"
 end
 
+if File.exists?('packed_mobile.css') # 向下相容
+  exec_cmd('mv packed_mobile.css packed_m.css')
+  exec_cmd('mv packed_mobile.png packed_m.png')
+end
+$has_mobile = true if File.exists?('packed_m.css')
+
 # ----------------------------------------------------------------
 # ● 由路徑計算 class 名字
 # ----------------------------------------------------------------
@@ -42,11 +48,12 @@ base_dir_name = File.basename(dir_name)
 theme = base_dir_name[/[^_]+$/]
 dir_without_theme = base_dir_name[0...-(theme.size + 1)]
 
-content = File.read('packed.css')
-if File.exists?('packed_mobile.css')
-  content += File.read('packed_mobile.css')
-  $has_mobile = true
-end
+output_paths_mapping = Dir['*.css'].map do |path|
+  name = File.basename(path, '.css')
+  next [name[/packed_(.*)/, 1], name]
+end.to_h
+
+content = output_paths_mapping.map{|_, path| File.read("#{path}.css") }.join
 
 Dir['images/**/'].map{|s| s[/images\/(.*)\//, 1] }.compact.map{|s| "#{s.gsub('/', '-')}-" }.each do |path| #"images/aaa/bbb/ccc.png" => "aaa-bbb-"
   content.gsub!(path, path.gsub('-', '_')) #aaa-bbb => aaa_bbb
@@ -83,18 +90,28 @@ loop do
 end
 # data = {selector => {nil => 'xxx', ':disabeld' => 'xxx', '[m]' => 'xxx'}}
 output1 = "" #mixin的output
-output1 += get_mixin("#{base_dir_name}_sprite", "background-image: image-url('#{dir_name}.png');")
-output1 += get_mixin("#{base_dir_name}_sprite_m", "background-image: image-url('#{dir_name}_m.png');") if $has_mobile
+output_paths_mapping.map do |kind, name|
+  if kind == nil
+    output1 += get_mixin("#{base_dir_name}_sprite", "background-image: image-url('#{dir_name}.png');")
+  else
+    output1 += get_mixin("#{base_dir_name}_sprite_#{kind}", "background-image: image-url('#{dir_name}_#{kind}.png');")
+  end
+end
 output2 = "" #scss的output
 output2 += "body[theme='#{theme}']{\n"
 output2 += "  .#{dir_without_theme}_sprite{\n"
 if $has_mobile
-  output2 += "    @include desktop{ @include #{base_dir_name}_sprite(); }\n"
-  output2 += "    @include mobile{ @include #{base_dir_name}_sprite_m(); }\n"
+  output2 += "    @include desktop{ @include #{base_dir_name}_sprite; }\n"
+  output2 += "    @include mobile{ @include #{base_dir_name}_sprite_m; }\n"
+elsif output_paths_mapping.size > 1
+  output2 += output_paths_mapping.map do |kind, name|
+    next "    @include #{base_dir_name}_sprite;\n" if kind == nil
+    next "    &[kind=\"#{kind}\"] { @include #{base_dir_name}_sprite_#{kind}; }\n"
+  end.join
 else
-  output2 += "    @include #{base_dir_name}_sprite();\n"
+  output2 += "    @include #{base_dir_name}_sprite;\n"
 end
-# output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m(); }}\n" if $has_mobile
+# output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m; }}\n" if $has_mobile
 class CssRule
   def initialize
     @hash = {}
@@ -130,7 +147,7 @@ for selector, css_data in data
     rules.add(prefixs, css)
   }
   output1 << get_mixin(func, rules.generate_css)
-  output2 << "    &.#{selector}{ @include #{func}(); }\n"
+  output2 << "    &.#{selector} { @include #{func}; }\n"
 end
 output2 += "  }\n"
 output2 += "}\n"
@@ -139,23 +156,30 @@ output = output0 + output1 + output2
 # ----------------------------------------------------------------
 # ● 壓縮圖片
 # ----------------------------------------------------------------
-exec_cmd('pngquant packed.png --force')
-exec_cmd('pngquant packed_mobile.png --force') if $has_mobile
+output_paths_mapping.each do |_, path|
+  exec_cmd("pngquant #{path}.png --force")
+end
+
 write_to_file('packed.scss', output)
 
 # ----------------------------------------------------------------
 # ● 自動輸出到專案
 # ----------------------------------------------------------------
 if SETTING['project_dir']
+  css_pre_lines = ["@import './mixin.scss';"]
+  css_pre_lines.unshift("@import 'global_mixins';") if $has_mobile
+
   sub_dirs = dir_name.split(File::Separator)[0...-1]
   css_path = Pathname.new(SETTING['project_dir']).join('app', 'assets', 'stylesheets', 'packed_sprites', *sub_dirs, dir_without_theme)
   img_path = Pathname.new(SETTING['project_dir']).join('app', 'assets', 'images', *sub_dirs)
   FileUtils.mkdir_p(css_path)
   FileUtils.mkdir_p(img_path)
   write_to_file(css_path.join('mixin.scss'), output1)
-  write_to_file(css_path.join('ocean.scss'), "@import './mixin.scss';\n\n#{output2}")
-  FileUtils.cp('packed-fs8.png', img_path.join(base_dir_name + '.png'))
-  FileUtils.cp('packed_mobile-fs8.png', img_path.join(base_dir_name + '_m.png')) if $has_mobile
+  write_to_file(css_path.join('ocean.scss'), "#{css_pre_lines.join("\n")}\n\n#{output2}")
+  output_paths_mapping.each do |_, path|
+    FileUtils.cp("#{path}-fs8.png", img_path.join("#{path.sub('packed', base_dir_name)}.png"))
+    exec_cmd("pngquant #{path}.png --force")
+  end
 end
 
 
