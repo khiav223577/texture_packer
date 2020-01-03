@@ -54,7 +54,7 @@ class TexturePacker
     output2 = "" #scss的output
     output2 += "body[theme='#{@theme}']{\n"
     output2 += "  .#{@dir_without_theme}_sprite{\n"
-    if $has_mobile
+    if @has_mobile
       output2 += "    @include desktop{ @include #{base_dir_name}_sprite; }\n"
       output2 += "    @include mobile{ @include #{base_dir_name}_sprite_m; }\n"
     elsif @output_paths_mapping.size > 1
@@ -65,7 +65,7 @@ class TexturePacker
     else
       output2 += "    @include #{base_dir_name}_sprite;\n"
     end
-    # output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m; }}\n" if $has_mobile
+    # output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m; }}\n" if @has_mobile
     for selector, css_data in data
       func = "#{base_dir_name}_#{selector}"
       rules = CssRule.new
