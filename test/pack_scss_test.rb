@@ -10,7 +10,105 @@ class PackScssTest < Minitest::Test
     refute_nil ::TexturePacker::VERSION
   end
 
-  def test_pack_chest_ocean
+  def test_pack_without_mobile_version
+    output_paths_mapping = { nil => 'packed' }
+    content = <<~STRING
+      /* ----------------------------------------------------
+         created with http://www.codeandweb.com/texturepacker 
+         ----------------------------------------------------
+         $TexturePacker:SmartUpdate:0e3cde37abc2d6283d832d64fcab33a3:c1d35c5361d7a9ec65c17d37456c5ef2:020bd24e3165ccf6122edbac54bb505b$
+         ----------------------------------------------------
+      
+         usage: <span class="{-spritename-} sprite"></span>
+      
+         replace {-spritename-} with the sprite you like to use
+      
+      */
+      
+      .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed.png);}
+      
+      .arrow-in {width:50px; height:98px; background-position: -1px -101px}
+      .arrow-out {width:51px; height:98px; background-position: -1px -1px}
+      .frame {width:73px; height:74px; background-position: -147px -80px}
+      .icon_boss {width:71px; height:71px; background-position: -221px -1px}
+      .icon_boss:hover {width:71px; height:71px; background-position: -148px -1px}
+      .icon_contents {width:71px; height:71px; background-position: -294px -1px}
+      .icon_contents:hover {width:71px; height:71px; background-position: -222px -74px}
+      .icon_craft {width:57px; height:57px; background-position: -377px -74px}
+      .icon_craft:hover {width:57px; height:57px; background-position: -172px -156px}
+      .icon_mission {width:71px; height:71px; background-position: -295px -74px}
+      .icon_mission:hover {width:71px; height:71px; background-position: -231px -147px}
+      .panel_bottom {width:92px; height:77px; background-position: -53px -101px}
+      .panel_top {width:92px; height:77px; background-position: -54px -1px}
+      .shield {width:71px; height:71px; background-position: -304px -147px}
+      .shield:hover {width:71px; height:71px; background-position: -367px -1px}
+      .shine {width:53px; height:39px; background-position: -53px -180px}
+      .sign_boss {width:30px; height:30px; background-position: -108px -180px}
+      .sign_box {width:47px; height:47px; background-position: -377px -133px}
+      .sign_mission {width:30px; height:30px; background-position: -140px -180px}
+    STRING
+
+    packer = TexturePacker.new('side_menu_ocean', output_paths_mapping, content, false)
+
+    expected_output0 = <<~STRING
+      /* ----------------------------------------------------
+         created with http://www.codeandweb.com/texturepacker 
+         ----------------------------------------------------
+         $TexturePacker:SmartUpdate:0e3cde37abc2d6283d832d64fcab33a3:c1d35c5361d7a9ec65c17d37456c5ef2:020bd24e3165ccf6122edbac54bb505b$
+         ----------------------------------------------------
+      
+         usage: <span class="{-spritename-} sprite"></span>
+      
+         replace {-spritename-} with the sprite you like to use
+      
+      */
+    STRING
+
+    expected_output1 = <<~STRING
+      @mixin side_menu_ocean_sprite{ background-image: image-url('side_menu_ocean.png'); }
+      @mixin side_menu_ocean_arrow{  &[in]{ width:50px; height:98px; background-position: -1px -101px; }&[out]{ width:51px; height:98px; background-position: -1px -1px; } }
+      @mixin side_menu_ocean_frame{ width:73px; height:74px; background-position: -147px -80px; }
+      @mixin side_menu_ocean_icon_boss{ width:71px; height:71px; background-position: -221px -1px; &:hover, &.hover{ width:71px; height:71px; background-position: -148px -1px; } }
+      @mixin side_menu_ocean_icon_contents{ width:71px; height:71px; background-position: -294px -1px; &:hover, &.hover{ width:71px; height:71px; background-position: -222px -74px; } }
+      @mixin side_menu_ocean_icon_craft{ width:57px; height:57px; background-position: -377px -74px; &:hover, &.hover{ width:57px; height:57px; background-position: -172px -156px; } }
+      @mixin side_menu_ocean_icon_mission{ width:71px; height:71px; background-position: -295px -74px; &:hover, &.hover{ width:71px; height:71px; background-position: -231px -147px; } }
+      @mixin side_menu_ocean_panel_bottom{ width:92px; height:77px; background-position: -53px -101px; }
+      @mixin side_menu_ocean_panel_top{ width:92px; height:77px; background-position: -54px -1px; }
+      @mixin side_menu_ocean_shield{ width:71px; height:71px; background-position: -304px -147px; &:hover, &.hover{ width:71px; height:71px; background-position: -367px -1px; } }
+      @mixin side_menu_ocean_shine{ width:53px; height:39px; background-position: -53px -180px; }
+      @mixin side_menu_ocean_sign_boss{ width:30px; height:30px; background-position: -108px -180px; }
+      @mixin side_menu_ocean_sign_box{ width:47px; height:47px; background-position: -377px -133px; }
+      @mixin side_menu_ocean_sign_mission{ width:30px; height:30px; background-position: -140px -180px; }
+    STRING
+
+    expected_output2 = <<~STRING
+      body[theme='ocean']{
+        .side_menu_sprite{
+          @include side_menu_ocean_sprite;
+          &.arrow { @include side_menu_ocean_arrow; }
+          &.frame { @include side_menu_ocean_frame; }
+          &.icon_boss { @include side_menu_ocean_icon_boss; }
+          &.icon_contents { @include side_menu_ocean_icon_contents; }
+          &.icon_craft { @include side_menu_ocean_icon_craft; }
+          &.icon_mission { @include side_menu_ocean_icon_mission; }
+          &.panel_bottom { @include side_menu_ocean_panel_bottom; }
+          &.panel_top { @include side_menu_ocean_panel_top; }
+          &.shield { @include side_menu_ocean_shield; }
+          &.shine { @include side_menu_ocean_shine; }
+          &.sign_boss { @include side_menu_ocean_sign_boss; }
+          &.sign_box { @include side_menu_ocean_sign_box; }
+          &.sign_mission { @include side_menu_ocean_sign_mission; }
+        }
+      }
+    STRING
+
+    output0, output1, output2 = packer.parse!
+    assert_equal expected_output0, output0
+    assert_equal expected_output1, output1
+    assert_equal expected_output2, output2
+  end
+
+  def test_pack_with_mobile_version
     output_paths_mapping = { 'm' => 'packed_m', nil => 'packed' }
     content = <<~STRING
       /* ----------------------------------------------------
