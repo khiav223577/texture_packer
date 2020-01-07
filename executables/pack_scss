@@ -2,6 +2,7 @@
 require 'yaml'
 require 'pathname'
 require 'fileutils'
+require 'texture_packer'
 # ----------------------------------------------------------------
 # ● 載入 yaml
 # ----------------------------------------------------------------
@@ -30,23 +31,16 @@ end
 
 exec_cmd('TexturePacker packer.tps')
 
-def get_mixin(func, css)
-  return "@mixin #{func}{ #{css} }\n"
-end
-
 if File.exists?('packed_mobile.css') # 向下相容
   exec_cmd('mv packed_mobile.css packed_m.css')
   exec_cmd('mv packed_mobile.png packed_m.png')
 end
-$has_mobile = true if File.exists?('packed_m.css')
+has_mobile = true if File.exists?('packed_m.css')
 
 # ----------------------------------------------------------------
 # ● 由路徑計算 class 名字
 # ----------------------------------------------------------------
 dir_name = File.expand_path(Dir.pwd).gsub(/.*\/Texture-Packer\/.*?\/(.*)/, '\1')
-base_dir_name = File.basename(dir_name)
-theme = base_dir_name[/[^_]+$/]
-dir_without_theme = base_dir_name[0...-(theme.size + 1)]
 
 output_paths_mapping = Dir['*.css'].map do |path|
   name = File.basename(path, '.css')
@@ -54,103 +48,8 @@ output_paths_mapping = Dir['*.css'].map do |path|
 end.to_h
 
 content = output_paths_mapping.map{|_, path| File.read("#{path}.css") }.join
-
-Dir['images/**/'].map{|s| s[/images\/(.*)\//, 1] }.compact.map{|s| "#{s.gsub('/', '-')}-" }.each do |path| #"images/aaa/bbb/ccc.png" => "aaa-bbb-"
-  content.gsub!(path, path.gsub('-', '_')) #aaa-bbb => aaa_bbb
-end
-
-data = {}
-content.gsub!(/-disabled \{/, ':disabled {') #-disabled => :disabled
-loop{ break if content.gsub!(/-([\w]+)((?:[^\w][\w]+)*) \{/, '[\1]\2 {') == nil }
-output0 = content
-output0.sub!(/(\/\*(.|\n)*?\*\/)/, '') #去掉註解
-output0 = $1 + "\n"
-# puts content
-def extract_rule!(content)
-  content.sub!(/^\.([a-zA-Z0-9_-]+)((?:\:\w+|\[\w+\])*) \{(.*?)\}/, '') #抓 rule
-  return [$1, $2, $3] #$1 = selector, $2 = prefix, $3 = css
-end
-def split_prefixs(selector)
-  selector.sub!(/^\.([a-zA-Z0-9_-]+)(:\w+|\[\w+\])?/, '') #抓 rule
-end
-loop do
-  selector, prefix, css = extract_rule!(content)
-  break if selector == nil
-  next if selector == "sprite"
-  prefixs = prefix.scan(/\[\w+\]|\:\w+/) #[m]:disabled => ['[m]', ':disabled']
-  prefixs.map! do |prefix|
-    case prefix
-    when '[active]' ; ':active' # 因為 TexturePacker 會把 xxx-active-hover 轉成 xxx-active:hover 而不是 xxx:active:hover
-    when '[hover]' ; ':hover'
-    else ; prefix
-    end
-  end
-  # p [selector, prefix, css]
-  (data[selector] ||= {})[prefixs] = "#{css};"
-end
-# data = {selector => {nil => 'xxx', ':disabeld' => 'xxx', '[m]' => 'xxx'}}
-output1 = "" #mixin的output
-output_paths_mapping.map do |kind, name|
-  if kind == nil
-    output1 += get_mixin("#{base_dir_name}_sprite", "background-image: image-url('#{dir_name}.png');")
-  else
-    output1 += get_mixin("#{base_dir_name}_sprite_#{kind}", "background-image: image-url('#{dir_name}_#{kind}.png');")
-  end
-end
-output2 = "" #scss的output
-output2 += "body[theme='#{theme}']{\n"
-output2 += "  .#{dir_without_theme}_sprite{\n"
-if $has_mobile
-  output2 += "    @include desktop{ @include #{base_dir_name}_sprite; }\n"
-  output2 += "    @include mobile{ @include #{base_dir_name}_sprite_m; }\n"
-elsif output_paths_mapping.size > 1
-  output2 += output_paths_mapping.map do |kind, name|
-    next "    @include #{base_dir_name}_sprite;\n" if kind == nil
-    next "    &[kind=\"#{kind}\"] { @include #{base_dir_name}_sprite_#{kind}; }\n"
-  end.join
-else
-  output2 += "    @include #{base_dir_name}_sprite;\n"
-end
-# output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m; }}\n" if $has_mobile
-class CssRule
-  def initialize
-    @hash = {}
-  end
-  def add(prefixs, css)
-    if prefixs.size > 0
-      (@hash[prefixs.first] ||= CssRule.new).add(prefixs[1..-1], css)
-    else
-      @css = css
-    end
-  end
-  def generate_css
-    inner_css = @hash.map do |prefix, obj|
-      case
-      when (prefix == nil || prefix == '')
-        [obj.generate_css]
-      when prefix[0] == ':'
-        ["&#{prefix}, &.#{prefix[1..-1]}{ ", obj.generate_css, " }"]
-      when prefix == '[m]'
-        ["@include mobile{ ", obj.generate_css, " }"]
-      else
-        ["&#{prefix}{ ", obj.generate_css, " }"]
-      end
-    end
-    inner = inner_css.size == 0 ? '' : " #{inner_css.join('')}"
-    return "#{@css}#{inner}"
-  end
-end
-for selector, css_data in data
-  func = "#{base_dir_name}_#{selector}"
-  rules = CssRule.new
-  css_data.each{|prefixs, css| #EX: prefixs == [':hover']
-    rules.add(prefixs, css)
-  }
-  output1 << get_mixin(func, rules.generate_css)
-  output2 << "    &.#{selector} { @include #{func}; }\n"
-end
-output2 += "  }\n"
-output2 += "}\n"
+packer = TexturePacker.new(dir_name, output_paths_mapping, content, has_mobile)
+output0, output1, output2 = packer.parse!
 output = output0 + output1 + output2
 
 # ----------------------------------------------------------------
@@ -167,17 +66,17 @@ write_to_file('packed.scss', output)
 # ----------------------------------------------------------------
 if SETTING['project_dir']
   css_pre_lines = ["@import './mixin.scss';"]
-  css_pre_lines.unshift("@import 'global_mixins';") if $has_mobile
+  css_pre_lines.unshift("@import 'global_mixins';") if has_mobile
 
   sub_dirs = dir_name.split(File::Separator)[0...-1]
-  css_path = Pathname.new(SETTING['project_dir']).join('app', 'assets', 'stylesheets', 'packed_sprites', *sub_dirs, dir_without_theme)
+  css_path = Pathname.new(SETTING['project_dir']).join('app', 'assets', 'stylesheets', 'packed_sprites', *sub_dirs, packer.dir_without_theme)
   img_path = Pathname.new(SETTING['project_dir']).join('app', 'assets', 'images', *sub_dirs)
   FileUtils.mkdir_p(css_path)
   FileUtils.mkdir_p(img_path)
   write_to_file(css_path.join('mixin.scss'), output1)
   write_to_file(css_path.join('ocean.scss'), "#{css_pre_lines.join("\n")}\n\n#{output2}")
   output_paths_mapping.each do |_, path|
-    FileUtils.cp("#{path}-fs8.png", img_path.join("#{path.sub('packed', base_dir_name)}.png"))
+    FileUtils.cp("#{path}-fs8.png", img_path.join("#{path.sub('packed', packer.base_dir_name)}.png"))
     exec_cmd("pngquant #{path}.png --force")
   end
 end
