@@ -73,7 +73,7 @@ class TexturePacker
         rules.add(prefixs, css)
       }
       output1 << get_mixin(func, rules.generate_css)
-      output2 << "    &.#{selector} { @include #{func}; }\n"
+      output2 << "    &.#{parse_language_selector!(selector)} { @include #{func}; }\n"
     end
     output2 += "  }\n"
     output2 += "}\n"
@@ -87,6 +87,21 @@ class TexturePacker
 
   def get_mixin(func, css)
     return "@mixin #{func}{ #{css} }\n"
+  end
+
+  def parse_language_selector!(selector)
+    language_parsed_array = selector.scan(/(_tw|_cn|_en)/).flatten
+    fail 'only allow one language in one img' if language_parsed_array.count > 1 # 只允許一種語言在一張圖片
+    return selector if language_parsed_array.count.zero? # 如果沒有語言分類就回傳原本的 selector
+
+    case language_parsed_array[0]
+    when '_tw'
+      return selector.gsub('_tw', ':lang(zh-TW)')
+    when '_cn'
+      return selector.gsub('_cn', ':lang(zh-CN)')
+    when '_en'
+      return selector.gsub('_en', ':lang(en)')
+    end
   end
 
   class CssRule
