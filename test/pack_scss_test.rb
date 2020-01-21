@@ -288,6 +288,7 @@ class PackScssTest < Minitest::Test
     expected_output2 = <<~STRING
       body[theme='ocean']{
         .side_menu_sprite{
+          @include side_menu_ocean_sprite;
           &.title:lang(zh-TW) { @include side_menu_ocean_title_tw; }
           &.title:lang(zh-CN) { @include side_menu_ocean_title_cn; }
           &.title:lang(en) { @include side_menu_ocean_title_en; }
