@@ -90,7 +90,7 @@ class TexturePacker
   end
 
   def parse_language_selector!(selector)
-    language_parsed_array = selector.scan(/(_tw|_cn|_en)/).flatten
+    language_parsed_array = selector.scan(/_(?:tw|cn|en)\z/)
     fail 'only allow one language in one img' if language_parsed_array.count > 1 # 只允許一種語言在一張圖片
     return selector if language_parsed_array.count.zero? # 如果沒有語言分類就回傳原本的 selector
 
