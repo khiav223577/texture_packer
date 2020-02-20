@@ -2,15 +2,14 @@ require 'yaml'
 require 'pathname'
 require 'fileutils'
 require 'texture_packer'
-require 'optparse'
 
 class TexturePacker::Cli
   def initialize(argv)
-    @options = parse_argv(argv)
+    @options = Options.new(argv)
   end
 
   def run
-    return @options[:hook_run].call if @options[:hook_run]
+    return @options.hook_run.call if @options.hook_run
 
     exec_cmd('TexturePacker packer.tps')
 
@@ -67,22 +66,6 @@ class TexturePacker::Cli
 
   private
 
-  def parse_argv(argv)
-    options = {}
-
-    OptionParser.new do |opts|
-      opts.on('-v', '--version', 'show the version number') do
-        options[:hook_run] = ->{ puts(TexturePacker::VERSION) }
-      end
-
-      opts.on("-h", "--help", "Prints this help") do
-        options[:hook_run] = ->{ puts(opts) }
-      end
-    end.parse!(argv)
-
-    return options
-  end
-
   def project_dir
     setting['project_dir']
   end
@@ -115,3 +98,5 @@ class TexturePacker::Cli
     puts "output: #{path} #{File.write(path, content)} bytes"
   end
 end
+
+require 'texture_packer/cli/options'
