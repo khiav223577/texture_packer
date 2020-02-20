@@ -10,6 +10,7 @@ class TexturePacker::Cli
   end
 
   def run
+    return puts(@option_parser) if @options[:print_help]
     return puts(TexturePacker::VERSION) if @options[:show_version]
 
     exec_cmd('TexturePacker packer.tps')
@@ -70,12 +71,17 @@ class TexturePacker::Cli
   def parse_argv(argv)
     options = {}
 
-    OptionParser.new do |opts|
+    @option_parser = OptionParser.new do |opts|
       opts.on('-v', '--version', 'show the version number') do
         options[:show_version] = true
       end
-    end.parse!(argv)
 
+      opts.on("-h", "--help", "Prints this help") do
+        options[:print_help] = true
+      end
+    end
+
+    @option_parser.parse!(argv)
     return options
   end
 
