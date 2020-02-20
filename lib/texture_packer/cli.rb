@@ -2,14 +2,16 @@ require 'yaml'
 require 'pathname'
 require 'fileutils'
 require 'texture_packer'
+require 'optparse'
 
 class TexturePacker::Cli
   def initialize(argv)
-    @argv = argv
+    @options = parse_argv(argv)
   end
 
   def run
-    return puts(TexturePacker::VERSION) if @argv.include?('-v')
+    return puts(TexturePacker::VERSION) if @options[:show_version]
+
     exec_cmd('TexturePacker packer.tps')
 
     if File.exists?('packed_mobile.css') # 向下相容
@@ -64,6 +66,18 @@ class TexturePacker::Cli
   end
 
   private
+
+  def parse_argv(argv)
+    options = {}
+
+    OptionParser.new do |opts|
+      opts.on('-v', '--version', 'show the version number') do
+        options[:show_version] = true
+      end
+    end.parse!(argv)
+
+    return options
+  end
 
   def project_dir
     setting['project_dir']
