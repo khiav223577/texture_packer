@@ -3,12 +3,13 @@ require 'pathname'
 require 'fileutils'
 require 'texture_packer'
 
-class TexturePacker::CLI
+class TexturePacker::Cli
   def initialize(argv)
-    @setting = load_yaml('setting.yml')
+    @argv = argv
   end
 
   def run
+    return puts(TexturePacker::VERSION) if @argv.include?('-v')
     exec_cmd('TexturePacker packer.tps')
 
     if File.exists?('packed_mobile.css') # 向下相容
@@ -44,13 +45,13 @@ class TexturePacker::CLI
     # ----------------------------------------------------------------
     # ● 自動輸出到專案
     # ----------------------------------------------------------------
-    if @setting['project_dir']
+    if project_dir
       css_pre_lines = ["@import './mixin.scss';"]
       css_pre_lines.unshift("@import 'global_mixins';") if has_mobile
 
       sub_dirs = dir_name.split(File::Separator)[0...-1]
-      css_path = Pathname.new(@setting['project_dir']).join('app', 'assets', 'stylesheets', 'packed_sprites', *sub_dirs, packer.dir_without_theme)
-      img_path = Pathname.new(@setting['project_dir']).join('app', 'assets', 'images', *sub_dirs)
+      css_path = Pathname.new(project_dir).join('app', 'assets', 'stylesheets', 'packed_sprites', *sub_dirs, packer.dir_without_theme)
+      img_path = Pathname.new(project_dir).join('app', 'assets', 'images', *sub_dirs)
       FileUtils.mkdir_p(css_path)
       FileUtils.mkdir_p(img_path)
       write_to_file(css_path.join('mixin.scss'), output1)
@@ -63,6 +64,14 @@ class TexturePacker::CLI
   end
 
   private
+
+  def project_dir
+    setting['project_dir']
+  end
+
+  def setting
+    @setting ||= load_yaml('setting.yml')
+  end
 
   # ----------------------------------------------------------------
   # ● 載入 yaml
