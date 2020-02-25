@@ -11,11 +11,11 @@ class TexturePacker::Cli
   def run
     return @options.hook_run.call if @options.hook_run
 
-    exec_cmd('TexturePacker packer.tps')
+    exec_cmd('TexturePacker', 'packer.tps')
 
     if File.exists?('packed_mobile.css') # 向下相容
-      exec_cmd('mv packed_mobile.css packed_m.css')
-      exec_cmd('mv packed_mobile.png packed_m.png')
+      exec_cmd('mv', 'packed_mobile.css', 'packed_m.css')
+      exec_cmd('mv', 'packed_mobile.png', 'packed_m.png')
     end
     has_mobile = true if File.exists?('packed_m.css')
 
@@ -38,7 +38,7 @@ class TexturePacker::Cli
     # ● 壓縮圖片
     # ----------------------------------------------------------------
     output_paths_mapping.each do |_, path|
-      exec_cmd("pngquant #{path}.png --force")
+      exec_cmd('pngquant', "#{path}.png", '--force')
     end
 
     write_to_file('packed.scss', output)
@@ -59,7 +59,7 @@ class TexturePacker::Cli
       write_to_file(css_path.join('ocean.scss'), "#{css_pre_lines.join("\n")}\n\n#{output2}")
       output_paths_mapping.each do |_, path|
         FileUtils.cp("#{path}-fs8.png", img_path.join("#{path.sub('packed', packer.base_dir_name)}.png"))
-        exec_cmd("pngquant #{path}.png --force")
+        exec_cmd('pngquant', "#{path}.png", '--force')
       end
     end
   end
@@ -85,10 +85,10 @@ class TexturePacker::Cli
     end
   end
 
-  def exec_cmd(cmd)
+  def exec_cmd(*args)
     begin
-      puts cmd
-      puts `#{cmd}`
+      puts args.join(' ')
+      puts system(*args)
     rescue => e
       puts e
     end
