@@ -1,6 +1,7 @@
 require 'texture_packer/version'
 
 class TexturePacker
+  attr_reader :dir_name
   attr_reader :base_dir_name
   attr_reader :dir_without_theme
 

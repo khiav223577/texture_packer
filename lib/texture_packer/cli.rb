@@ -45,27 +45,29 @@ class TexturePacker::Cli
     # ----------------------------------------------------------------
     # ● 自動輸出到專案
     # ----------------------------------------------------------------
-    if @options.project_dir
-      css_pre_lines = ["@import './mixin.scss';"]
-      css_pre_lines.unshift("@import 'global_mixins';") if has_mobile
-
-      sub_dirs = dir_name.split(File::Separator)[0...-1]
-
-      project_assets_path = Pathname.new(@options.project_dir).join('app', 'assets')
-      css_path = project_assets_path.join('stylesheets', 'packed_sprites', *sub_dirs, packer.dir_without_theme)
-      img_path = project_assets_path.join('images', *sub_dirs)
-      FileUtils.mkdir_p(css_path)
-      FileUtils.mkdir_p(img_path)
-      write_to_file(css_path.join('mixin.scss'), output1)
-      write_to_file(css_path.join('ocean.scss'), "#{css_pre_lines.join("\n")}\n\n#{output2}")
-      output_paths_mapping.each do |_, path|
-        FileUtils.cp("#{path}-fs8.png", img_path.join("#{path.sub('packed', packer.base_dir_name)}.png"))
-        exec_cmd('pngquant', "#{path}.png", '--force')
-      end
-    end
+    write_to_project_dir(packer, has_mobile) if @options.project_dir
   end
 
   private
+
+  def write_to_project_dir(packer, has_mobile)
+    css_pre_lines = ["@import './mixin.scss';"]
+    css_pre_lines.unshift("@import 'global_mixins';") if has_mobile
+
+    sub_dirs = packer.dir_name.split(File::Separator)[0...-1]
+
+    project_assets_path = Pathname.new(@options.project_dir).join('app', 'assets')
+    css_path = project_assets_path.join('stylesheets', 'packed_sprites', *sub_dirs, packer.dir_without_theme)
+    img_path = project_assets_path.join('images', *sub_dirs)
+    FileUtils.mkdir_p(css_path)
+    FileUtils.mkdir_p(img_path)
+    write_to_file(css_path.join('mixin.scss'), output1)
+    write_to_file(css_path.join('ocean.scss'), "#{css_pre_lines.join("\n")}\n\n#{output2}")
+    output_paths_mapping.each do |_, path|
+      FileUtils.cp("#{path}-fs8.png", img_path.join("#{path.sub('packed', packer.base_dir_name)}.png"))
+      exec_cmd('pngquant', "#{path}.png", '--force')
+    end
+  end
 
   def exec_cmd(*args)
     begin
