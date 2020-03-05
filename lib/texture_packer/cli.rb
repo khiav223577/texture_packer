@@ -10,49 +10,64 @@ class TexturePacker::Cli
   def run
     return @options.hook_run.call if @options.hook_run
 
-    exec_cmd('TexturePacker', 'packer.tps')
+    pack_css!
 
     if File.exists?('packed_mobile.css') # 向下相容
       exec_cmd('mv', 'packed_mobile.css', 'packed_m.css')
       exec_cmd('mv', 'packed_mobile.png', 'packed_m.png')
     end
-    has_mobile = true if File.exists?('packed_m.css')
 
-    # ----------------------------------------------------------------
-    # ● 由路徑計算 class 名字
-    # ----------------------------------------------------------------
-    dir_name = File.expand_path(Dir.pwd).gsub(/.*\/Texture-Packer\/.*?\/(.*)/, '\1')
-
-    output_paths_mapping = Dir['*.css'].map do |path|
-      name = File.basename(path, '.css')
-      next [name[/packed_(.*)/, 1], name]
-    end.to_h
-
-    content = output_paths_mapping.map{|_, path| File.read("#{path}.css") }.join
-    packer = TexturePacker.new(dir_name, output_paths_mapping, content, has_mobile)
+    packer = create_packer
     output0, output1, output2 = packer.parse!
     output = output0 + output1 + output2
 
-    # ----------------------------------------------------------------
-    # ● 壓縮圖片
-    # ----------------------------------------------------------------
-    output_paths_mapping.each do |_, path|
-      exec_cmd('pngquant', "#{path}.png", '--force')
-    end
-
+    compress_images! # 壓縮圖片
     write_to_file('packed.scss', output)
 
-    # ----------------------------------------------------------------
-    # ● 自動輸出到專案
-    # ----------------------------------------------------------------
-    write_to_project_dir(packer, output1, output2, has_mobile) if @options.project_dir
+
+    write_to_project_dir!(packer, output1, output2) if @options.project_dir
   end
 
   private
 
-  def write_to_project_dir(packer, output1, output2, has_mobile)
+  def pack_css!
+    exec_cmd('TexturePacker', 'packer.tps')
+  end
+
+  # ----------------------------------------------------------------
+  # ● 壓縮圖片
+  # ----------------------------------------------------------------
+  def compress_images!
+    output_paths_mapping.each do |_, path|
+      exec_cmd('pngquant', "#{path}.png", '--force')
+    end
+  end
+
+  def create_packer
+    has_mobile = true if File.exists?('packed_m.css')
+
+    # 由路徑計算 class 名字
+    dir_name = File.expand_path(Dir.pwd).gsub(/.*\/Texture-Packer\/.*?\/(.*)/, '\1')
+
+    content = output_paths_mapping.map{|_, path| File.read("#{path}.css") }.join
+    return TexturePacker.new(dir_name, output_paths_mapping, content, has_mobile)
+  end
+
+  def output_paths_mapping
+    @output_paths_mapping ||= begin
+      Dir['*.css'].map do |path|
+        name = File.basename(path, '.css')
+        next [name[/packed_(.*)/, 1], name]
+      end.to_h
+    end
+  end
+
+  # ----------------------------------------------------------------
+  # ● 自動輸出到專案
+  # ----------------------------------------------------------------
+  def write_to_project_dir!(packer, output1, output2)
     css_pre_lines = ["@import './mixin.scss';"]
-    css_pre_lines.unshift("@import 'global_mixins';") if has_mobile
+    css_pre_lines.unshift("@import 'global_mixins';") if packer.has_mobile
 
     sub_dirs = packer.dir_name.split(File::Separator)[0...-1]
 

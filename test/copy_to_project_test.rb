@@ -23,6 +23,6 @@ class CopyToProjectTest < Minitest::Test
     @cli.expects(:write_to_file).with(css_dir_path.join('ocean.scss'), "@import './mixin.scss';\n\nfake_content2")
     FileUtils.expects(:cp).with('packed-fs8.png', img_dir_path.join('side_menu_ocean.png'))
 
-    @cli.send(:write_to_project_dir, @packer, 'fake_content1', 'fake_content2', false)
+    @cli.send(:write_to_project_dir!, @packer, 'fake_content1', 'fake_content2')
   end
 end
