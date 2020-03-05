@@ -24,7 +24,6 @@ class TexturePacker::Cli
     compress_images! # 壓縮圖片
     write_to_file('packed.scss', output)
 
-
     write_to_project_dir!(packer, output1, output2) if @options.project_dir
   end
 
