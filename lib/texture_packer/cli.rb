@@ -65,7 +65,6 @@ class TexturePacker::Cli
     write_to_file(css_path.join('ocean.scss'), "#{css_pre_lines.join("\n")}\n\n#{output2}")
     packer.output_paths_mapping.each do |_, path|
       FileUtils.cp("#{path}-fs8.png", img_path.join("#{path.sub('packed', packer.base_dir_name)}.png"))
-      exec_cmd('pngquant', "#{path}.png", '--force')
     end
   end
 

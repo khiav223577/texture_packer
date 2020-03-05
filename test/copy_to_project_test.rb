@@ -56,7 +56,6 @@ class CopyToProjectTest < Minitest::Test
     @cli.expects(:write_to_file).with(css_dir_path.join('mixin.scss'), 'content1')
     @cli.expects(:write_to_file).with(css_dir_path.join('ocean.scss'), "@import './mixin.scss';\n\ncontent2")
     FileUtils.expects(:cp).with('packed-fs8.png', img_dir_path.join('side_menu_ocean.png'))
-    @cli.expects(:exec_cmd).with('pngquant', 'packed.png', '--force')
 
     @cli.send(:write_to_project_dir, @packer, 'content1', 'content2', false)
   end
