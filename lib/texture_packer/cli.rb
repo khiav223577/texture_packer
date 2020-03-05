@@ -12,11 +12,6 @@ class TexturePacker::Cli
 
     pack_css!
 
-    if File.exists?('packed_mobile.css') # 向下相容
-      exec_cmd('mv', 'packed_mobile.css', 'packed_m.css')
-      exec_cmd('mv', 'packed_mobile.png', 'packed_m.png')
-    end
-
     packer = create_packer
     output0, output1, output2 = packer.parse!
     output = output0 + output1 + output2
