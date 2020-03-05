@@ -47,8 +47,17 @@ class CopyToProjectTest < Minitest::Test
   end
 
   def test_save
-    expect_to_receive(FileUtils, :mkdir_p, 'sdf', nil) do
-      @cli.send(:write_to_project_dir, @packer, false)
-    end
+    css_dir_path = Pathname.new('/var/www/my_project/app/assets/stylesheets/packed_sprites/side_menu')
+    img_dir_path = Pathname.new('/var/www/my_project/app/assets/images')
+
+    FileUtils.expects(:mkdir_p).with(css_dir_path)
+    FileUtils.expects(:mkdir_p).with(img_dir_path)
+
+    @cli.expects(:write_to_file).with(css_dir_path.join('mixin.scss'), 'content1')
+    @cli.expects(:write_to_file).with(css_dir_path.join('ocean.scss'), "@import './mixin.scss';\n\ncontent2")
+    FileUtils.expects(:cp).with('packed-fs8.png', img_dir_path.join('side_menu_ocean.png'))
+    @cli.expects(:exec_cmd).with('pngquant', 'packed.png', '--force')
+
+    @cli.send(:write_to_project_dir, @packer, 'content1', 'content2', false)
   end
 end

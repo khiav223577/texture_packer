@@ -45,12 +45,12 @@ class TexturePacker::Cli
     # ----------------------------------------------------------------
     # ● 自動輸出到專案
     # ----------------------------------------------------------------
-    write_to_project_dir(packer, has_mobile) if @options.project_dir
+    write_to_project_dir(packer, output1, output2, has_mobile) if @options.project_dir
   end
 
   private
 
-  def write_to_project_dir(packer, has_mobile)
+  def write_to_project_dir(packer, output1, output2, has_mobile)
     css_pre_lines = ["@import './mixin.scss';"]
     css_pre_lines.unshift("@import 'global_mixins';") if has_mobile
 
@@ -63,7 +63,7 @@ class TexturePacker::Cli
     FileUtils.mkdir_p(img_path)
     write_to_file(css_path.join('mixin.scss'), output1)
     write_to_file(css_path.join('ocean.scss'), "#{css_pre_lines.join("\n")}\n\n#{output2}")
-    output_paths_mapping.each do |_, path|
+    packer.output_paths_mapping.each do |_, path|
       FileUtils.cp("#{path}-fs8.png", img_path.join("#{path.sub('packed', packer.base_dir_name)}.png"))
       exec_cmd('pngquant', "#{path}.png", '--force')
     end
