@@ -1,4 +1,3 @@
-require 'yaml'
 require 'pathname'
 require 'fileutils'
 require 'texture_packer'
@@ -67,24 +66,7 @@ class TexturePacker::Cli
   private
 
   def project_dir
-    setting['project_dir']
   end
-
-  def setting
-    @setting ||= load_yaml('setting.yml')
-  end
-
-  # ----------------------------------------------------------------
-  # ● 載入 yaml
-  # ----------------------------------------------------------------
-  def load_yaml(path)
-    begin
-      return YAML.load_file(Pathname.new(__dir__).join(path)) || {}
-    rescue Errno::ENOENT
-      return {}
-    end
-  end
-
   def exec_cmd(*args)
     begin
       puts args.join(' ')
