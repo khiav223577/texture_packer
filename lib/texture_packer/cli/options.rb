@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'optparse'
 
 class TexturePacker::Cli::Options
   attr_reader :hook_run
-  attr_reader :proejct_dir
+  attr_reader :project_dir
 
   def initialize(argv)
     OptionParser.new do |opts|
@@ -15,7 +17,7 @@ class TexturePacker::Cli::Options
       end
 
       opts.on("-pPATH", "--project_dir=PATH", "Copy the generated scss files / images to specified project") do |val|
-        @proejct_dir = val
+        @project_dir = val
       end
     end.parse!(argv)
   end

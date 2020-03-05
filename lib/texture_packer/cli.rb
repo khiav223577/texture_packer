@@ -45,7 +45,7 @@ class TexturePacker::Cli
     # ----------------------------------------------------------------
     # ● 自動輸出到專案
     # ----------------------------------------------------------------
-    if @options.proejct_dir
+    if @options.project_dir
       css_pre_lines = ["@import './mixin.scss';"]
       css_pre_lines.unshift("@import 'global_mixins';") if has_mobile
 
