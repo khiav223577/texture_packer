@@ -20,6 +20,7 @@ class CliTest < Minitest::Test
       Usage: rake_test_loader [options]
           -v, --version                    show the version number
           -h, --help                       Prints this help
+          -p, --project_dir=PATH           Copy the generated scss files / images to specified project
     STRING
   end
 
@@ -28,6 +29,7 @@ class CliTest < Minitest::Test
       Usage: rake_test_loader [options]
           -v, --version                    show the version number
           -h, --help                       Prints this help
+          -p, --project_dir=PATH           Copy the generated scss files / images to specified project
     STRING
   end
 

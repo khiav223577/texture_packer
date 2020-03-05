@@ -45,13 +45,15 @@ class TexturePacker::Cli
     # ----------------------------------------------------------------
     # ● 自動輸出到專案
     # ----------------------------------------------------------------
-    if project_dir
+    if @options.proejct_dir
       css_pre_lines = ["@import './mixin.scss';"]
       css_pre_lines.unshift("@import 'global_mixins';") if has_mobile
 
       sub_dirs = dir_name.split(File::Separator)[0...-1]
-      css_path = Pathname.new(project_dir).join('app', 'assets', 'stylesheets', 'packed_sprites', *sub_dirs, packer.dir_without_theme)
-      img_path = Pathname.new(project_dir).join('app', 'assets', 'images', *sub_dirs)
+
+      project_assets_path = Pathname.new(@options.project_dir).join('app', 'assets')
+      css_path = project_assets_path.join('stylesheets', 'packed_sprites', *sub_dirs, packer.dir_without_theme)
+      img_path = project_assets_path.join('images', *sub_dirs)
       FileUtils.mkdir_p(css_path)
       FileUtils.mkdir_p(img_path)
       write_to_file(css_path.join('mixin.scss'), output1)
@@ -65,8 +67,6 @@ class TexturePacker::Cli
 
   private
 
-  def project_dir
-  end
   def exec_cmd(*args)
     begin
       puts args.join(' ')

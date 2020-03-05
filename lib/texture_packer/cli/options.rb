@@ -2,6 +2,7 @@ require 'optparse'
 
 class TexturePacker::Cli::Options
   attr_reader :hook_run
+  attr_reader :proejct_dir
 
   def initialize(argv)
     OptionParser.new do |opts|
@@ -11,6 +12,10 @@ class TexturePacker::Cli::Options
 
       opts.on("-h", "--help", "Prints this help") do
         @hook_run = ->{ puts(opts) }
+      end
+
+      opts.on("-pPATH", "--project_dir=PATH", "Copy the generated scss files / images to specified project") do |val|
+        @proejct_dir = val
       end
     end.parse!(argv)
   end
