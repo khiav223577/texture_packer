@@ -13,10 +13,6 @@ class TexturePacker::Cli
 
     exec_cmd('TexturePacker', 'packer.tps')
 
-    if File.exists?('packed_mobile.css') # 向下相容
-      exec_cmd('mv', 'packed_mobile.css', 'packed_m.css')
-      exec_cmd('mv', 'packed_mobile.png', 'packed_m.png')
-    end
     has_mobile = true if File.exists?('packed_m.css')
 
     # ----------------------------------------------------------------
