@@ -1,6 +1,8 @@
 ## Change Log
 
-### [upcoming](https://github.com/khiav223577/texture_packer/compare/v1.3.0...HEAD) 2020/03/04
+### [v1.4.0](https://github.com/khiav223577/texture_packer/compare/v1.3.0...v1.4.0) 2020/03/11
+- [#11](https://github.com/khiav223577/texture_packer/pull/11) Add options to export packed scss files and images to your project (@khiav223577)
+- [#10](https://github.com/khiav223577/texture_packer/pull/10) Remove backward compatibility of name as `packed_mobile` (@khiav223577)
 - [#9](https://github.com/khiav223577/texture_packer/pull/9) escape shell command argument (@Fatmylin)
 - [#5](https://github.com/khiav223577/texture_packer/pull/5) 為 pack_scss 加上 -v, -h 二個參數的功能 (@khiav223577)
 
