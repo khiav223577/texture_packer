@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require 'texture_packer/cli'
 
-TexturePacker::CLI.new(ARGV).run
+TexturePacker::Cli.new(ARGV).run
