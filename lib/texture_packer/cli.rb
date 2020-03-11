@@ -1,4 +1,3 @@
-require 'yaml'
 require 'pathname'
 require 'fileutils'
 require 'texture_packer'
@@ -11,73 +10,70 @@ class TexturePacker::Cli
   def run
     return @options.hook_run.call if @options.hook_run
 
-    exec_cmd('TexturePacker', 'packer.tps')
+    pack_css!
 
-    has_mobile = true if File.exists?('packed_m.css')
-
-    # ----------------------------------------------------------------
-    # ● 由路徑計算 class 名字
-    # ----------------------------------------------------------------
-    dir_name = File.expand_path(Dir.pwd).gsub(/.*\/Texture-Packer\/.*?\/(.*)/, '\1')
-
-    output_paths_mapping = Dir['*.css'].map do |path|
-      name = File.basename(path, '.css')
-      next [name[/packed_(.*)/, 1], name]
-    end.to_h
-
-    content = output_paths_mapping.map{|_, path| File.read("#{path}.css") }.join
-    packer = TexturePacker.new(dir_name, output_paths_mapping, content, has_mobile)
+    packer = create_packer
     output0, output1, output2 = packer.parse!
     output = output0 + output1 + output2
 
-    # ----------------------------------------------------------------
-    # ● 壓縮圖片
-    # ----------------------------------------------------------------
-    output_paths_mapping.each do |_, path|
-      exec_cmd('pngquant', "#{path}.png", '--force')
-    end
-
+    compress_images! # 壓縮圖片
     write_to_file('packed.scss', output)
 
-    # ----------------------------------------------------------------
-    # ● 自動輸出到專案
-    # ----------------------------------------------------------------
-    if project_dir
-      css_pre_lines = ["@import './mixin.scss';"]
-      css_pre_lines.unshift("@import 'global_mixins';") if has_mobile
-
-      sub_dirs = dir_name.split(File::Separator)[0...-1]
-      css_path = Pathname.new(project_dir).join('app', 'assets', 'stylesheets', 'packed_sprites', *sub_dirs, packer.dir_without_theme)
-      img_path = Pathname.new(project_dir).join('app', 'assets', 'images', *sub_dirs)
-      FileUtils.mkdir_p(css_path)
-      FileUtils.mkdir_p(img_path)
-      write_to_file(css_path.join('mixin.scss'), output1)
-      write_to_file(css_path.join('ocean.scss'), "#{css_pre_lines.join("\n")}\n\n#{output2}")
-      output_paths_mapping.each do |_, path|
-        FileUtils.cp("#{path}-fs8.png", img_path.join("#{path.sub('packed', packer.base_dir_name)}.png"))
-        exec_cmd('pngquant', "#{path}.png", '--force')
-      end
-    end
+    write_to_project_dir!(packer, output1, output2) if @options.project_dir
   end
 
   private
 
-  def project_dir
-    setting['project_dir']
-  end
-
-  def setting
-    @setting ||= load_yaml('setting.yml')
+  def pack_css!
+    exec_cmd('TexturePacker', 'packer.tps')
   end
 
   # ----------------------------------------------------------------
-  # ● 載入 yaml
+  # ● 壓縮圖片
   # ----------------------------------------------------------------
-  def load_yaml(path)
-    begin
-      return YAML.load_file(Pathname.new(__dir__).join(path)) || {}
-    rescue Errno::ENOENT
-      return {}
+  def compress_images!
+    output_paths_mapping.each do |_, path|
+      exec_cmd('pngquant', "#{path}.png", '--force')
+    end
+  end
+
+  def create_packer
+    has_mobile = true if File.exists?('packed_m.css')
+
+    # 由路徑計算 class 名字
+    dir_name = File.expand_path(Dir.pwd).gsub(/.*\/Texture-Packer\/.*?\/(.*)/, '\1')
+
+    content = output_paths_mapping.map{|_, path| File.read("#{path}.css") }.join
+    return TexturePacker.new(dir_name, output_paths_mapping, content, has_mobile)
+  end
+
+  def output_paths_mapping
+    @output_paths_mapping ||= begin
+      Dir['*.css'].map do |path|
+        name = File.basename(path, '.css')
+        next [name[/packed_(.*)/, 1], name]
+      end.to_h
+    end
+  end
+
+  # ----------------------------------------------------------------
+  # ● 自動輸出到專案
+  # ----------------------------------------------------------------
+  def write_to_project_dir!(packer, output1, output2)
+    css_pre_lines = ["@import './mixin.scss';"]
+    css_pre_lines.unshift("@import 'global_mixins';") if packer.has_mobile
+
+    sub_dirs = packer.dir_name.split(File::Separator)[0...-1]
+
+    project_assets_path = Pathname.new(@options.project_dir).join('app', 'assets')
+    css_path = project_assets_path.join('stylesheets', 'packed_sprites', *sub_dirs, packer.dir_without_theme)
+    img_path = project_assets_path.join('images', *sub_dirs)
+    FileUtils.mkdir_p(css_path)
+    FileUtils.mkdir_p(img_path)
+    write_to_file(css_path.join('mixin.scss'), output1)
+    write_to_file(css_path.join('ocean.scss'), "#{css_pre_lines.join("\n")}\n\n#{output2}")
+    packer.output_paths_mapping.each do |_, path|
+      FileUtils.cp("#{path}-fs8.png", img_path.join("#{path.sub('packed', packer.base_dir_name)}.png"))
     end
   end
 

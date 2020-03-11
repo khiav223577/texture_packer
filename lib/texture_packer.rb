@@ -1,8 +1,11 @@
 require 'texture_packer/version'
 
 class TexturePacker
+  attr_reader :dir_name
   attr_reader :base_dir_name
   attr_reader :dir_without_theme
+  attr_reader :output_paths_mapping
+  attr_reader :has_mobile
 
   def initialize(dir_name, output_paths_mapping, content, has_mobile)
     @output_paths_mapping = output_paths_mapping
