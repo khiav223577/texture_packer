@@ -66,9 +66,9 @@ class TexturePacker
       output2 += "    @include desktop{ @include #{base_dir_name}_sprite; }\n"
       output2 += "    @include mobile{ @include #{base_dir_name}_sprite_m; }\n"
     when SPLIT_BY_I18N
-      output2 += "    &:lang(zh-TW)[{ @include #{base_dir_name}_sprite_tw; }\n"
-      output2 += "    &:lang(zh-CN)[{ @include #{base_dir_name}_sprite_cn; }\n"
-      output2 += "    &:lang(en)[{ @include #{base_dir_name}_sprite_en; }\n"
+      output2 += "    &:lang(zh-TW){ @include #{base_dir_name}_sprite_tw; }\n"
+      output2 += "    &:lang(zh-CN){ @include #{base_dir_name}_sprite_cn; }\n"
+      output2 += "    &:lang(en){ @include #{base_dir_name}_sprite_en; }\n"
     else
       if @output_paths_mapping.size > 1
         output2 += @output_paths_mapping.map do |kind, name|
