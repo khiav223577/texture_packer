@@ -103,7 +103,7 @@ class TexturePacker
     return "@mixin #{func}{ #{css} }\n"
   end
 
-  def parse_language_selector!(selector)
+  def parse_language_selector!(selector) # 向下相容
     language_parsed_array = selector.scan(/_(?:tw|cn|en)\z/)
     return selector if language_parsed_array.count.zero? # 如果沒有語言分類就回傳原本的 selector
 
@@ -135,13 +135,19 @@ class TexturePacker
     end
     def generate_css
       inner_css = @hash.map do |prefix, obj|
-        case
-        when (prefix == nil || prefix == '')
+        case prefix
+        when nil, ''
           [obj.generate_css]
-        when prefix[0] == ':'
+        when /\A:/
           ["&#{prefix}, &.#{prefix[1..-1]}{ ", obj.generate_css, " }"]
-        when prefix == '[m]'
+        when '[m]'
           ["@include mobile{ ", obj.generate_css, " }"]
+        when '[tw]'
+          ["&:lang(zh-TW){ ", obj.generate_css, " }"]
+        when '[cn]'
+          ["&:lang(zh-CN){ ", obj.generate_css, " }"]
+        when '[en]'
+          ["&:lang(en){ ", obj.generate_css, " }"]
         else
           ["&#{prefix}{ ", obj.generate_css, " }"]
         end

@@ -240,7 +240,7 @@ class PackScssTest < Minitest::Test
     assert_equal expected_output2, output2
   end
 
-  def test_pack_with_images_with_lang
+  def test_pack_with_images_with_lang_old_version # 向下相容
     output_paths_mapping = { nil => 'packed' }
     content = <<~STRING
       /* ----------------------------------------------------
@@ -292,6 +292,64 @@ class PackScssTest < Minitest::Test
           &.title:lang(zh-TW) { @include side_menu_ocean_title_tw; }
           &.title:lang(zh-CN) { @include side_menu_ocean_title_cn; }
           &.title:lang(en) { @include side_menu_ocean_title_en; }
+        }
+      }
+    STRING
+
+    output0, output1, output2 = packer.parse!
+    assert_equal expected_output0, output0
+    assert_equal expected_output1, output1
+    assert_equal expected_output2, output2
+  end
+
+  def test_pack_with_images_with_lang
+    output_paths_mapping = { nil => 'packed' }
+    content = <<~STRING
+      /* ----------------------------------------------------
+         created with http://www.codeandweb.com/texturepacker 
+         ----------------------------------------------------
+         $TexturePacker:SmartUpdate:0e3cde37abc2d6283d832d64fcab33a3:c1d35c5361d7a9ec65c17d37456c5ef2:020bd24e3165ccf6122edbac54bb505b$
+         ----------------------------------------------------
+      
+         usage: <span class="{-spritename-} sprite"></span>
+      
+         replace {-spritename-} with the sprite you like to use
+      
+      */
+      
+      .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed.png);}
+      
+      .title-tw {width:50px; height:40px; background-position: -240px -280px}
+      .title-cn {width:50px; height:40px; background-position: -240px -300px}
+      .title-en {width:50px; height:40px; background-position: -240px -320px}
+    STRING
+
+    packer = TexturePacker.new('side_menu_ocean', output_paths_mapping, content)
+
+    expected_output0 = <<~STRING
+      /* ----------------------------------------------------
+         created with http://www.codeandweb.com/texturepacker 
+         ----------------------------------------------------
+         $TexturePacker:SmartUpdate:0e3cde37abc2d6283d832d64fcab33a3:c1d35c5361d7a9ec65c17d37456c5ef2:020bd24e3165ccf6122edbac54bb505b$
+         ----------------------------------------------------
+      
+         usage: <span class="{-spritename-} sprite"></span>
+      
+         replace {-spritename-} with the sprite you like to use
+      
+      */
+    STRING
+
+    expected_output1 = <<~STRING
+      @mixin side_menu_ocean_sprite{ background-image: image-url('side_menu_ocean.png'); }
+      @mixin side_menu_ocean_title{  &:lang(zh-TW){ width:50px; height:40px; background-position: -240px -280px; }&:lang(zh-CN){ width:50px; height:40px; background-position: -240px -300px; }&:lang(en){ width:50px; height:40px; background-position: -240px -320px; } }
+    STRING
+
+    expected_output2 = <<~STRING
+      body[theme='ocean']{
+        .side_menu_sprite{
+          @include side_menu_ocean_sprite;
+          &.title { @include side_menu_ocean_title; }
         }
       }
     STRING
