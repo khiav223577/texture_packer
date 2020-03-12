@@ -5,7 +5,6 @@ class TexturePacker
   attr_reader :base_dir_name
   attr_reader :dir_without_theme
   attr_reader :output_paths_mapping
-  attr_reader :has_mobile
 
   def initialize(dir_name, output_paths_mapping, content, has_mobile)
     @output_paths_mapping = output_paths_mapping
@@ -104,6 +103,11 @@ class TexturePacker
     when '_en'
       return selector.gsub('_en', ':lang(en)')
     end
+  end
+
+  def need_global_mixins?
+    return true if @has_mobile
+    return false
   end
 
   class CssRule

@@ -61,7 +61,7 @@ class TexturePacker::Cli
   # ----------------------------------------------------------------
   def write_to_project_dir!(packer, output1, output2)
     css_pre_lines = ["@import './mixin.scss';"]
-    css_pre_lines.unshift("@import 'global_mixins';") if packer.has_mobile
+    css_pre_lines.unshift("@import 'global_mixins';") if packer.need_global_mixins?
 
     sub_dirs = packer.dir_name.split(File::Separator)[0...-1]
 
