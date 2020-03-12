@@ -40,6 +40,7 @@ class TexturePacker::Cli
   def create_packer
     split_type = case
                  when File.exists?('packed_m.css')  ; TexturePacker::SPLIT_BY_MOBILE
+                 when File.exists?('packed_tw.css') ; TexturePacker::SPLIT_I18N
                  else                               ; nil
                  end
 

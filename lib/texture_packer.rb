@@ -9,6 +9,7 @@ class TexturePacker
   attr_reader :output_paths_mapping
 
   SPLIT_BY_MOBILE = 'mobile'
+  SPLIT_BY_I18N = 'i18n'
 
   def initialize(dir_name, output_paths_mapping, content, split_type = nil)
     @output_paths_mapping = output_paths_mapping
@@ -60,16 +61,23 @@ class TexturePacker
     output2 = "" #scss的output
     output2 += "body[theme='#{@theme}']{\n"
     output2 += "  .#{@dir_without_theme}_sprite{\n"
-    if @split_type == SPLIT_BY_MOBILE
+    case @split_type
+    when SPLIT_BY_MOBILE
       output2 += "    @include desktop{ @include #{base_dir_name}_sprite; }\n"
       output2 += "    @include mobile{ @include #{base_dir_name}_sprite_m; }\n"
-    elsif @output_paths_mapping.size > 1
-      output2 += @output_paths_mapping.map do |kind, name|
-        next "    @include #{base_dir_name}_sprite;\n" if kind == nil
-        next "    &[kind=\"#{kind}\"] { @include #{base_dir_name}_sprite_#{kind}; }\n"
-      end.join
+    when SPLIT_BY_I18N
+      output2 += "    &:lang(zh-TW)[{ @include #{base_dir_name}_sprite_tw; }\n"
+      output2 += "    &:lang(zh-CN)[{ @include #{base_dir_name}_sprite_cn; }\n"
+      output2 += "    &:lang(en)[{ @include #{base_dir_name}_sprite_en; }\n"
     else
-      output2 += "    @include #{base_dir_name}_sprite;\n"
+      if @output_paths_mapping.size > 1
+        output2 += @output_paths_mapping.map do |kind, name|
+          next "    @include #{base_dir_name}_sprite;\n" if kind == nil
+          next "    &[kind=\"#{kind}\"] { @include #{base_dir_name}_sprite_#{kind}; }\n"
+        end.join
+      else
+        output2 += "    @include #{base_dir_name}_sprite;\n"
+      end
     end
     # output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m; }}\n" if @split_type == SPLIT_BY_MOBILE
     for selector, css_data in data
