@@ -48,7 +48,7 @@ class PackScssTest < Minitest::Test
       .sign_mission {width:30px; height:30px; background-position: -140px -180px}
     STRING
 
-    packer = TexturePacker.new('side_menu_ocean', output_paths_mapping, content, false)
+    packer = TexturePacker.new('side_menu_ocean', output_paths_mapping, content)
 
     expected_output0 = <<~STRING
       /* ----------------------------------------------------
@@ -178,7 +178,7 @@ class PackScssTest < Minitest::Test
       .panel_top-m {width:44px; height:13px; background-position: -1px -231px}
     STRING
 
-    packer = TexturePacker.new('chest_ocean', output_paths_mapping, content, true)
+    packer = TexturePacker.new('chest_ocean', output_paths_mapping, content, TexturePacker::SPLIT_BY_MOBILE)
 
     expected_output0 = <<~STRING
       /* ----------------------------------------------------
@@ -262,7 +262,7 @@ class PackScssTest < Minitest::Test
       .title_en {width:50px; height:40px; background-position: -240px -320px}
     STRING
 
-    packer = TexturePacker.new('side_menu_ocean', output_paths_mapping, content, false)
+    packer = TexturePacker.new('side_menu_ocean', output_paths_mapping, content)
 
     expected_output0 = <<~STRING
       /* ----------------------------------------------------
