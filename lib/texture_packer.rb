@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'texture_packer/version'
 
 class TexturePacker
@@ -6,10 +8,12 @@ class TexturePacker
   attr_reader :dir_without_theme
   attr_reader :output_paths_mapping
 
-  def initialize(dir_name, output_paths_mapping, content, has_mobile)
+  SPLIT_BY_MOBILE = 'mobile'
+
+  def initialize(dir_name, output_paths_mapping, content, split_type = nil)
     @output_paths_mapping = output_paths_mapping
     @content = content.dup
-    @has_mobile = has_mobile
+    @split_type = split_type
 
     @dir_name = dir_name
     @base_dir_name = File.basename(@dir_name)
@@ -56,7 +60,7 @@ class TexturePacker
     output2 = "" #scss的output
     output2 += "body[theme='#{@theme}']{\n"
     output2 += "  .#{@dir_without_theme}_sprite{\n"
-    if @has_mobile
+    if @split_type == SPLIT_BY_MOBILE
       output2 += "    @include desktop{ @include #{base_dir_name}_sprite; }\n"
       output2 += "    @include mobile{ @include #{base_dir_name}_sprite_m; }\n"
     elsif @output_paths_mapping.size > 1
@@ -67,7 +71,7 @@ class TexturePacker
     else
       output2 += "    @include #{base_dir_name}_sprite;\n"
     end
-    # output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m; }}\n" if @has_mobile
+    # output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m; }}\n" if @split_type == SPLIT_BY_MOBILE
     for selector, css_data in data
       func = "#{base_dir_name}_#{selector}"
       rules = CssRule.new
@@ -106,7 +110,7 @@ class TexturePacker
   end
 
   def need_global_mixins?
-    return true if @has_mobile
+    return true if @split_type == SPLIT_BY_MOBILE
     return false
   end
 

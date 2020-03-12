@@ -38,13 +38,16 @@ class TexturePacker::Cli
   end
 
   def create_packer
-    has_mobile = true if File.exists?('packed_m.css')
+    split_type = case
+                 when File.exists?('packed_m.css')  ; TexturePacker::SPLIT_BY_MOBILE
+                 else                               ; nil
+                 end
 
     # 由路徑計算 class 名字
     dir_name = File.expand_path(Dir.pwd).gsub(/.*\/Texture-Packer\/.*?\/(.*)/, '\1')
 
     content = output_paths_mapping.map{|_, path| File.read("#{path}.css") }.join
-    return TexturePacker.new(dir_name, output_paths_mapping, content, has_mobile)
+    return TexturePacker.new(dir_name, output_paths_mapping, content, split_type)
   end
 
   def output_paths_mapping
