@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'texture_packer/version'
 
 class TexturePacker
@@ -5,12 +7,14 @@ class TexturePacker
   attr_reader :base_dir_name
   attr_reader :dir_without_theme
   attr_reader :output_paths_mapping
-  attr_reader :has_mobile
 
-  def initialize(dir_name, output_paths_mapping, content, has_mobile)
+  SPLIT_BY_MOBILE = 'mobile'
+  SPLIT_BY_I18N = 'i18n'
+
+  def initialize(dir_name, output_paths_mapping, content, split_type = nil)
     @output_paths_mapping = output_paths_mapping
     @content = content.dup
-    @has_mobile = has_mobile
+    @split_type = split_type
 
     @dir_name = dir_name
     @base_dir_name = File.basename(@dir_name)
@@ -57,18 +61,25 @@ class TexturePacker
     output2 = "" #scss的output
     output2 += "body[theme='#{@theme}']{\n"
     output2 += "  .#{@dir_without_theme}_sprite{\n"
-    if @has_mobile
+    case @split_type
+    when SPLIT_BY_MOBILE
       output2 += "    @include desktop{ @include #{base_dir_name}_sprite; }\n"
       output2 += "    @include mobile{ @include #{base_dir_name}_sprite_m; }\n"
-    elsif @output_paths_mapping.size > 1
-      output2 += @output_paths_mapping.map do |kind, name|
-        next "    @include #{base_dir_name}_sprite;\n" if kind == nil
-        next "    &[kind=\"#{kind}\"] { @include #{base_dir_name}_sprite_#{kind}; }\n"
-      end.join
+    when SPLIT_BY_I18N
+      output2 += "    &:lang(zh-TW){ @include #{base_dir_name}_sprite_tw; }\n"
+      output2 += "    &:lang(zh-CN){ @include #{base_dir_name}_sprite_cn; }\n"
+      output2 += "    &:lang(en){ @include #{base_dir_name}_sprite_en; }\n"
     else
-      output2 += "    @include #{base_dir_name}_sprite;\n"
+      if @output_paths_mapping.size > 1
+        output2 += @output_paths_mapping.map do |kind, name|
+          next "    @include #{base_dir_name}_sprite;\n" if kind == nil
+          next "    &[kind=\"#{kind}\"] { @include #{base_dir_name}_sprite_#{kind}; }\n"
+        end.join
+      else
+        output2 += "    @include #{base_dir_name}_sprite;\n"
+      end
     end
-    # output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m; }}\n" if @has_mobile
+    # output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m; }}\n" if @split_type == SPLIT_BY_MOBILE
     for selector, css_data in data
       func = "#{base_dir_name}_#{selector}"
       rules = CssRule.new
@@ -92,7 +103,7 @@ class TexturePacker
     return "@mixin #{func}{ #{css} }\n"
   end
 
-  def parse_language_selector!(selector)
+  def parse_language_selector!(selector) # 向下相容
     language_parsed_array = selector.scan(/_(?:tw|cn|en)\z/)
     return selector if language_parsed_array.count.zero? # 如果沒有語言分類就回傳原本的 selector
 
@@ -104,6 +115,11 @@ class TexturePacker
     when '_en'
       return selector.gsub('_en', ':lang(en)')
     end
+  end
+
+  def need_global_mixins?
+    return true if @split_type == SPLIT_BY_MOBILE
+    return false
   end
 
   class CssRule
@@ -119,13 +135,19 @@ class TexturePacker
     end
     def generate_css
       inner_css = @hash.map do |prefix, obj|
-        case
-        when (prefix == nil || prefix == '')
+        case prefix
+        when nil, ''
           [obj.generate_css]
-        when prefix[0] == ':'
+        when /\A:/
           ["&#{prefix}, &.#{prefix[1..-1]}{ ", obj.generate_css, " }"]
-        when prefix == '[m]'
+        when '[m]'
           ["@include mobile{ ", obj.generate_css, " }"]
+        when '[tw]'
+          ["&:lang(zh-TW){ ", obj.generate_css, " }"]
+        when '[cn]'
+          ["&:lang(zh-CN){ ", obj.generate_css, " }"]
+        when '[en]'
+          ["&:lang(en){ ", obj.generate_css, " }"]
         else
           ["&#{prefix}{ ", obj.generate_css, " }"]
         end

@@ -9,7 +9,7 @@ class CopyToProjectTest < Minitest::Test
     output_paths_mapping = { nil => 'packed' }
     content = 'fake_content'
 
-    @packer = TexturePacker.new('side_menu_ocean', output_paths_mapping, content, false)
+    @packer = TexturePacker.new('side_menu_ocean', output_paths_mapping, content)
   end
 
   def test_run_with_project_path
