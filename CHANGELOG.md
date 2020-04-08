@@ -1,5 +1,9 @@
 ## Change Log
 
+### [v1.5.0](https://github.com/khiav223577/texture_packer/compare/v1.4.1...v1.5.0) 2020/04/08
+- [#13](https://github.com/khiav223577/texture_packer/pull/13) Update version.rb (@Fatmylin)
+- [#12](https://github.com/khiav223577/texture_packer/pull/12) Support using `-en`, `-tw`, `-cn` to set i18n. And support split pngs by i18n. (@khiav223577)
+
 ### [v1.4.0](https://github.com/khiav223577/texture_packer/compare/v1.3.0...v1.4.0) 2020/03/11
 - [#11](https://github.com/khiav223577/texture_packer/pull/11) Add options to export packed scss files and images to your project (@khiav223577)
 - [#10](https://github.com/khiav223577/texture_packer/pull/10) Remove backward compatibility of name as `packed_mobile` (@khiav223577)
