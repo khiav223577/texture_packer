@@ -577,8 +577,11 @@ Style/For:
 Style/FormatString:
   Description: 'Enforce the use of Kernel#sprintf, Kernel#format or String#%.'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#sprintf'
-  EnforcedStyle: sprintf
+  EnforcedStyle: percent
   Enabled: true
+
+Style/FormatStringToken:
+  Enabled: false
 
 Style/GlobalVars:
   Description: 'Do not introduce global variables.'
