@@ -53,7 +53,7 @@ class TexturePacker::Cli
 
   def output_paths_mapping
     @output_paths_mapping ||= begin
-      Dir['*.css'].map do |path|
+      Dir['*.css'].sort.map do |path|
         name = File.basename(path, '.css')
         next [name[/packed_(.*)/, 1], name]
       end.to_h
