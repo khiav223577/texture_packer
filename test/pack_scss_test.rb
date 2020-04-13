@@ -481,4 +481,163 @@ class PackScssTest < Minitest::Test
     assert_equal expected_output1, output1
     assert_equal expected_output2, output2
   end
+
+  def test_pack_with_images_split_by_i18n_and_mobile
+    output_paths_mapping = {
+      'tw'   => 'packed_tw',
+      'cn'   => 'packed_cn',
+      'tw_m' => 'packed_tw_m',
+      'cn_m' => 'packed_cn_m',
+    }
+
+    content = <<~STRING
+      /* ----------------------------------------------------
+         created with http://www.codeandweb.com/texturepacker 
+         ----------------------------------------------------
+         $TexturePacker:SmartUpdate:82fcb055ddeee0e6dbf5d1f69ebb4c69:c98b6be795491c5582285ea45c8901bd:d3a998f8a0a3d65c7be2f2d49f86c396$
+         ----------------------------------------------------
+      
+         usage: <span class="{-spritename-} sprite"></span>
+      
+         replace {-spritename-} with the sprite you like to use
+      
+      */
+      
+      .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_tw.png);}
+      
+      .exam-tw {width:151px; height:61px; background-position: -1px -1px}
+      .official_beige-tw {width:151px; height:61px; background-position: -154px -1px}
+      .official_blue-tw {width:151px; height:61px; background-position: -307px -1px}
+      .player_beige-tw {width:151px; height:61px; background-position: -460px -1px}
+      .player_blue-tw {width:151px; height:61px; background-position: -613px -1px}
+      .video_beige-tw {width:151px; height:61px; background-position: -766px -1px}
+      .video_blue-tw {width:151px; height:61px; background-position: -919px -1px}
+
+      /* ----------------------------------------------------
+         created with http://www.codeandweb.com/texturepacker 
+         ----------------------------------------------------
+         $TexturePacker:SmartUpdate:82fcb055ddeee0e6dbf5d1f69ebb4c69:c98b6be795491c5582285ea45c8901bd:d3a998f8a0a3d65c7be2f2d49f86c396$
+         ----------------------------------------------------
+      
+         usage: <span class="{-spritename-} sprite"></span>
+      
+         replace {-spritename-} with the sprite you like to use
+      
+      */
+      
+      .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_tw_m.png);}
+      
+      .official_beige-tw-m {width:101px; height:69px; background-position: -1px -1px}
+      .official_blue-tw-m {width:101px; height:69px; background-position: -1px -72px}
+      .player_beige-tw-m {width:101px; height:69px; background-position: -1px -143px}
+      .player_blue-tw-m {width:101px; height:69px; background-position: -1px -214px}
+      .video_beige-tw-m {width:101px; height:69px; background-position: -1px -285px}
+      .video_blue-tw-m {width:101px; height:69px; background-position: -1px -356px}
+
+
+      /* ----------------------------------------------------
+         created with http://www.codeandweb.com/texturepacker 
+         ----------------------------------------------------
+         $TexturePacker:SmartUpdate:82fcb055ddeee0e6dbf5d1f69ebb4c69:c98b6be795491c5582285ea45c8901bd:d3a998f8a0a3d65c7be2f2d49f86c396$
+         ----------------------------------------------------
+      
+         usage: <span class="{-spritename-} sprite"></span>
+      
+         replace {-spritename-} with the sprite you like to use
+      
+      */
+      
+      .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_cn.png);}
+      
+      .exam-cn {width:151px; height:61px; background-position: -1px -1px}
+      .official_beige-cn {width:151px; height:61px; background-position: -154px -1px}
+      .official_blue-cn {width:151px; height:61px; background-position: -307px -1px}
+      .player_beige-cn {width:151px; height:61px; background-position: -460px -1px}
+      .player_blue-cn {width:151px; height:61px; background-position: -613px -1px}
+      .video_beige-cn {width:151px; height:61px; background-position: -766px -1px}
+      .video_blue-cn {width:151px; height:61px; background-position: -919px -1px}
+
+      /* ----------------------------------------------------
+         created with http://www.codeandweb.com/texturepacker 
+         ----------------------------------------------------
+         $TexturePacker:SmartUpdate:82fcb055ddeee0e6dbf5d1f69ebb4c69:c98b6be795491c5582285ea45c8901bd:d3a998f8a0a3d65c7be2f2d49f86c396$
+         ----------------------------------------------------
+      
+         usage: <span class="{-spritename-} sprite"></span>
+      
+         replace {-spritename-} with the sprite you like to use
+      
+      */
+      
+      .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_cn_m.png);}
+      
+      .official_beige-cn-m {width:101px; height:69px; background-position: -1px -1px}
+      .official_blue-cn-m {width:101px; height:69px; background-position: -1px -72px}
+      .player_beige-cn-m {width:101px; height:69px; background-position: -1px -143px}
+      .player_blue-cn-m {width:101px; height:69px; background-position: -1px -214px}
+      .video_beige-cn-m {width:101px; height:69px; background-position: -1px -285px}
+      .video_blue-cn-m.png {width:101px; height:69px; background-position: -1px -356px}
+    STRING
+
+    split_type = TexturePacker::SPLIT_BY_I18N_AND_MOBILE
+    packer = TexturePacker.new('explanation_words_ocean', output_paths_mapping, content, split_type)
+
+    expected_output0 = <<~STRING
+      /* ----------------------------------------------------
+         created with http://www.codeandweb.com/texturepacker 
+         ----------------------------------------------------
+         $TexturePacker:SmartUpdate:82fcb055ddeee0e6dbf5d1f69ebb4c69:c98b6be795491c5582285ea45c8901bd:d3a998f8a0a3d65c7be2f2d49f86c396$
+         ----------------------------------------------------
+      
+         usage: <span class="{-spritename-} sprite"></span>
+      
+         replace {-spritename-} with the sprite you like to use
+      
+      */
+    STRING
+
+    expected_output1 = <<~STRING
+      @mixin explanation_words_ocean_sprite_tw{ background-image: image-url('explanation_words_ocean_tw.png'); }
+      @mixin explanation_words_ocean_sprite_cn{ background-image: image-url('explanation_words_ocean_cn.png'); }
+      @mixin explanation_words_ocean_sprite_tw_m{ background-image: image-url('explanation_words_ocean_tw_m.png'); }
+      @mixin explanation_words_ocean_sprite_cn_m{ background-image: image-url('explanation_words_ocean_cn_m.png'); }
+      @mixin explanation_words_ocean_exam{  &:lang(zh-TW){ width:151px; height:61px; background-position: -1px -1px; }&:lang(zh-CN){ width:151px; height:61px; background-position: -1px -1px; } }
+      @mixin explanation_words_ocean_official_beige{  &:lang(zh-TW){ width:151px; height:61px; background-position: -154px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -1px; } }&:lang(zh-CN){ width:151px; height:61px; background-position: -154px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -1px; } } }
+      @mixin explanation_words_ocean_official_blue{  &:lang(zh-TW){ width:151px; height:61px; background-position: -307px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -72px; } }&:lang(zh-CN){ width:151px; height:61px; background-position: -307px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -72px; } } }
+      @mixin explanation_words_ocean_player_beige{  &:lang(zh-TW){ width:151px; height:61px; background-position: -460px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -143px; } }&:lang(zh-CN){ width:151px; height:61px; background-position: -460px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -143px; } } }
+      @mixin explanation_words_ocean_player_blue{  &:lang(zh-TW){ width:151px; height:61px; background-position: -613px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -214px; } }&:lang(zh-CN){ width:151px; height:61px; background-position: -613px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -214px; } } }
+      @mixin explanation_words_ocean_video_beige{  &:lang(zh-TW){ width:151px; height:61px; background-position: -766px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -285px; } }&:lang(zh-CN){ width:151px; height:61px; background-position: -766px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -285px; } } }
+      @mixin explanation_words_ocean_video_blue{  &:lang(zh-TW){ width:151px; height:61px; background-position: -919px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -356px; } }&:lang(zh-CN){ width:151px; height:61px; background-position: -919px -1px; } }
+    STRING
+
+    expected_output2 = <<~STRING
+      body[theme='ocean']{
+        .explanation_words_sprite{
+          @include desktop{
+            &:lang(zh-TW){ @include explanation_words_ocean_sprite_tw; }
+            &:lang(zh-CN){ @include explanation_words_ocean_sprite_cn; }
+            &:lang(en){ @include explanation_words_ocean_sprite_en; }
+          }
+          @include mobile{
+            &:lang(zh-TW){ @include explanation_words_ocean_sprite_tw_m; }
+            &:lang(zh-CN){ @include explanation_words_ocean_sprite_cn_m; }
+            &:lang(en){ @include explanation_words_ocean_sprite_en_m; }
+          }
+          &.exam { @include explanation_words_ocean_exam; }
+          &.official_beige { @include explanation_words_ocean_official_beige; }
+          &.official_blue { @include explanation_words_ocean_official_blue; }
+          &.player_beige { @include explanation_words_ocean_player_beige; }
+          &.player_blue { @include explanation_words_ocean_player_blue; }
+          &.video_beige { @include explanation_words_ocean_video_beige; }
+          &.video_blue { @include explanation_words_ocean_video_blue; }
+        }
+      }
+    STRING
+
+    output0, output1, output2 = packer.parse!
+
+    assert_equal expected_output0, output0
+    assert_equal expected_output1, output1
+    assert_equal expected_output2, output2
+  end
 end
