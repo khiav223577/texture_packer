@@ -483,7 +483,13 @@ class PackScssTest < Minitest::Test
   end
 
   def test_pack_with_images_split_by_i18n_and_mobile
-    output_paths_mapping = { 'tw' => 'packed_tw', 'cn' => 'packed_cn', 'en' => 'packed_en' }
+    output_paths_mapping = {
+      'tw'   => 'packed_tw',
+      'cn'   => 'packed_cn',
+      'tw_m' => 'packed_tw_m',
+      'cn_m' => 'packed_cn_m',
+    }
+
     content = <<~STRING
       /* ----------------------------------------------------
          created with http://www.codeandweb.com/texturepacker 
@@ -593,7 +599,8 @@ class PackScssTest < Minitest::Test
     expected_output1 = <<~STRING
       @mixin explanation_words_ocean_sprite_tw{ background-image: image-url('explanation_words_ocean_tw.png'); }
       @mixin explanation_words_ocean_sprite_cn{ background-image: image-url('explanation_words_ocean_cn.png'); }
-      @mixin explanation_words_ocean_sprite_en{ background-image: image-url('explanation_words_ocean_en.png'); }
+      @mixin explanation_words_ocean_sprite_tw_m{ background-image: image-url('explanation_words_ocean_tw_m.png'); }
+      @mixin explanation_words_ocean_sprite_cn_m{ background-image: image-url('explanation_words_ocean_cn_m.png'); }
       @mixin explanation_words_ocean_exam{  &:lang(zh-TW){ width:151px; height:61px; background-position: -1px -1px; }&:lang(zh-CN){ width:151px; height:61px; background-position: -1px -1px; } }
       @mixin explanation_words_ocean_official_beige{  &:lang(zh-TW){ width:151px; height:61px; background-position: -154px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -1px; } }&:lang(zh-CN){ width:151px; height:61px; background-position: -154px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -1px; } } }
       @mixin explanation_words_ocean_official_blue{  &:lang(zh-TW){ width:151px; height:61px; background-position: -307px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -72px; } }&:lang(zh-CN){ width:151px; height:61px; background-position: -307px -1px; @include mobile{ width:101px; height:69px; background-position: -1px -72px; } } }
