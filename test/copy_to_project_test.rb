@@ -15,7 +15,7 @@ class CopyToProjectTest < Minitest::Test
   def test_run_with_project_path
     @cli.expects(:pack_css!)
     @cli.expects(:create_packer).returns(@packer)
-    @packer.expects(:parse!).returns(['fake_output1', 'fake_output2', 'fake_output3'])
+    @packer.expects(:parse!).returns(%w[fake_output1 fake_output2 fake_output3])
     @cli.expects(:compress_images!)
     @cli.expects(:write_to_file).with('packed.scss', 'fake_output1fake_output2fake_output3')
 

@@ -24,22 +24,22 @@ class TexturePacker
   end
 
   def parse!
-    Dir['images/**/'].map{|s| s[/images\/(.*)\//, 1] }.compact.map{|s| "#{s.gsub('/', '-')}-" }.each do |path| #"images/aaa/bbb/ccc.png" => "aaa-bbb-"
-      @content.gsub!(path, path.gsub('-', '_')) #aaa-bbb => aaa_bbb
+    Dir['images/**/'].map{|s| s[%r{images/(.*)/}, 1] }.compact.map{|s| "#{s.tr('/', '-')}-" }.each do |path| # "images/aaa/bbb/ccc.png" => "aaa-bbb-"
+      @content.gsub!(path, path.tr('-', '_')) # aaa-bbb => aaa_bbb
     end
 
     data = {}
     @content.gsub!(/-disabled \{/, ':disabled {') #-disabled => :disabled
     loop{ break if @content.gsub!(/-([\w]+)((?:[^\w][\w]+)*) \{/, '[\1]\2 {') == nil }
     output0 = @content
-    output0.sub!(/(\/\*(.|\n)*?\*\/)/, '') #去掉註解
+    output0.sub!(%r{(/\*(.|\n)*?\*/)}, '') # 去掉註解
     output0 = $1 + "\n"
 
     loop do
       selector, prefix, css = extract_rule!
       break if selector == nil
-      next if selector == "sprite"
-      prefixs = prefix.scan(/\[\w+\]|\:\w+/) #[m]:disabled => ['[m]', ':disabled']
+      next if selector == 'sprite'
+      prefixs = prefix.scan(/\[\w+\]|\:\w+/) # [m]:disabled => ['[m]', ':disabled']
       prefixs.map! do |prefix|
         case prefix
         when '[active]' ; ':active' # 因為 TexturePacker 會把 xxx-active-hover 轉成 xxx-active:hover 而不是 xxx:active:hover
@@ -51,15 +51,15 @@ class TexturePacker
       (data[selector] ||= {})[prefixs] = "#{css};"
     end
     # data = {selector => {nil => 'xxx', ':disabeld' => 'xxx', '[m]' => 'xxx'}}
-    output1 = "" #mixin的output
-    @output_paths_mapping.map do |kind, name|
+    output1 = '' # mixin的output
+    @output_paths_mapping.map do |kind, _name|
       if kind == nil
         output1 += get_mixin("#{base_dir_name}_sprite", "background-image: image-url('#{@dir_name}.png');")
       else
         output1 += get_mixin("#{base_dir_name}_sprite_#{kind}", "background-image: image-url('#{@dir_name}_#{kind}.png');")
       end
     end
-    output2 = "" #scss的output
+    output2 = '' # scss的output
     output2 += "body[theme='#{@theme}']{\n"
     output2 += "  .#{@dir_without_theme}_sprite{\n"
     case @split_type
@@ -84,7 +84,7 @@ class TexturePacker
       output2 += "    &:lang(en){ @include #{base_dir_name}_sprite_en; }\n"
     else
       if @output_paths_mapping.size > 1
-        output2 += @output_paths_mapping.map do |kind, name|
+        output2 += @output_paths_mapping.map do |kind, _name|
           next "    @include #{base_dir_name}_sprite;\n" if kind == nil
           next "    &[kind=\"#{kind}\"] { @include #{base_dir_name}_sprite_#{kind}; }\n"
         end.join
@@ -93,12 +93,12 @@ class TexturePacker
       end
     end
     # output2 += "    &.split_mobile{ @include mobile{ @include #{base_dir_name}_sprite_m; }}\n" if @split_type == SPLIT_BY_MOBILE
-    for selector, css_data in data
+    data.each do |selector, css_data|
       func = "#{base_dir_name}_#{selector}"
       rules = CssRule.new
-      css_data.each{|prefixs, css| #EX: prefixs == [':hover']
+      css_data.each do |prefixs, css| # EX: prefixs == [':hover']
         rules.add(prefixs, css)
-      }
+      end
       output1 << get_mixin(func, rules.generate_css)
       output2 << "    &.#{parse_language_selector!(selector)} { @include #{func}; }\n"
     end
@@ -108,8 +108,8 @@ class TexturePacker
   end
 
   def extract_rule!
-    @content.sub!(/^\.([a-zA-Z0-9_-]+)((?:\:\w+|\[\w+\])*) \{(.*?)\}/, '') #抓 rule
-    return [$1, $2, $3] #$1 = selector, $2 = prefix, $3 = css
+    @content.sub!(/^\.([a-zA-Z0-9_-]+)((?:\:\w+|\[\w+\])*) \{(.*?)\}/, '') # 抓 rule
+    return [Regexp.last_match(1), Regexp.last_match(2), Regexp.last_match(3)] # $1 = selector, $2 = prefix, $3 = css
   end
 
   def get_mixin(func, css)
@@ -139,6 +139,7 @@ class TexturePacker
     def initialize
       @hash = {}
     end
+
     def add(prefixs, css)
       if prefixs.size > 0
         (@hash[prefixs.first] ||= CssRule.new).add(prefixs[1..-1], css)
@@ -146,23 +147,24 @@ class TexturePacker
         @css = css
       end
     end
+
     def generate_css
       inner_css = @hash.map do |prefix, obj|
         case prefix
         when nil, ''
           [obj.generate_css]
         when /\A:/
-          ["&#{prefix}, &.#{prefix[1..-1]}{ ", obj.generate_css, " }"]
+          ["&#{prefix}, &.#{prefix[1..-1]}{ ", obj.generate_css, ' }']
         when '[m]'
-          ["@include mobile{ ", obj.generate_css, " }"]
+          ['@include mobile{ ', obj.generate_css, ' }']
         when '[tw]'
-          ["&:lang(zh-TW){ ", obj.generate_css, " }"]
+          ['&:lang(zh-TW){ ', obj.generate_css, ' }']
         when '[cn]'
-          ["&:lang(zh-CN){ ", obj.generate_css, " }"]
+          ['&:lang(zh-CN){ ', obj.generate_css, ' }']
         when '[en]'
-          ["&:lang(en){ ", obj.generate_css, " }"]
+          ['&:lang(en){ ', obj.generate_css, ' }']
         else
-          ["&#{prefix}{ ", obj.generate_css, " }"]
+          ["&#{prefix}{ ", obj.generate_css, ' }']
         end
       end
       inner = inner_css.size == 0 ? '' : " #{inner_css.join('')}"
