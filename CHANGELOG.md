@@ -1,5 +1,8 @@
 ## Change Log
 
+### [v1.6.1](https://github.com/khiav223577/texture_packer/compare/v1.6.0...v1.6.1) 2020/04/13
+- [#17](https://github.com/khiav223577/texture_packer/pull/17) auto correct coding style by rubocop (@khiav223577)
+
 ### [v1.6.0](https://github.com/khiav223577/texture_packer/compare/v1.5.0...v1.6.0) 2020/04/13
 - [#16](https://github.com/khiav223577/texture_packer/pull/16) Support split images by i18n + mobile. (@khiav223577)
 - [#15](https://github.com/khiav223577/texture_packer/pull/15) Fix: the return value of Dir#[] method is different in different environments. (@khiav223577)
