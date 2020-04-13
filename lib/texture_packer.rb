@@ -8,8 +8,9 @@ class TexturePacker
   attr_reader :dir_without_theme
   attr_reader :output_paths_mapping
 
-  SPLIT_BY_MOBILE = 'mobile'
-  SPLIT_BY_I18N = 'i18n'
+  SPLIT_BY_MOBILE          = 'mobile'
+  SPLIT_BY_I18N            = 'i18n'
+  SPLIT_BY_I18N_AND_MOBILE = 'i18n_and_mobile'
 
   def initialize(dir_name, output_paths_mapping, content, split_type = nil)
     @output_paths_mapping = output_paths_mapping
@@ -62,6 +63,18 @@ class TexturePacker
     output2 += "body[theme='#{@theme}']{\n"
     output2 += "  .#{@dir_without_theme}_sprite{\n"
     case @split_type
+    when SPLIT_BY_I18N_AND_MOBILE
+      output2 += "    @include desktop{\n"
+      output2 += "      &:lang(zh-TW){ @include #{base_dir_name}_sprite_tw; }\n"
+      output2 += "      &:lang(zh-CN){ @include #{base_dir_name}_sprite_cn; }\n"
+      output2 += "      &:lang(en){ @include #{base_dir_name}_sprite_en; }\n"
+      output2 += "    }\n"
+
+      output2 += "    @include mobile{\n"
+      output2 += "      &:lang(zh-TW){ @include #{base_dir_name}_sprite_tw_m; }\n"
+      output2 += "      &:lang(zh-CN){ @include #{base_dir_name}_sprite_cn_m; }\n"
+      output2 += "      &:lang(en){ @include #{base_dir_name}_sprite_en_m; }\n"
+      output2 += "    }\n"
     when SPLIT_BY_MOBILE
       output2 += "    @include desktop{ @include #{base_dir_name}_sprite; }\n"
       output2 += "    @include mobile{ @include #{base_dir_name}_sprite_m; }\n"
