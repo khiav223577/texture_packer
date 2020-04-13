@@ -36,15 +36,15 @@ class TexturePacker
     output0 = $1 + "\n"
 
     loop do
-      selector, prefix, css = extract_rule!
+      selector, string_prefix, css = extract_rule!
       break if selector == nil
       next if selector == 'sprite'
-      prefixs = prefix.scan(/\[\w+\]|\:\w+/) # [m]:disabled => ['[m]', ':disabled']
+      prefixs = string_prefix.scan(/\[\w+\]|\:\w+/) # [m]:disabled => ['[m]', ':disabled']
       prefixs.map! do |prefix|
         case prefix
-        when '[active]' ; ':active' # 因為 TexturePacker 會把 xxx-active-hover 轉成 xxx-active:hover 而不是 xxx:active:hover
-        when '[hover]' ; ':hover'
-        else ; prefix
+        when '[active]' then ':active' # 因為 TexturePacker 會把 xxx-active-hover 轉成 xxx-active:hover 而不是 xxx:active:hover
+        when '[hover]'  then ':hover'
+        else                 prefix
         end
       end
       # p [selector, prefix, css]
