@@ -14,19 +14,19 @@ class PackScssTest < Minitest::Test
     output_paths_mapping = { nil => 'packed' }
     content = <<~STRING
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:0e3cde37abc2d6283d832d64fcab33a3:c1d35c5361d7a9ec65c17d37456c5ef2:020bd24e3165ccf6122edbac54bb505b$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
-      
+
       .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed.png);}
-      
+
       .arrow-in {width:50px; height:98px; background-position: -1px -101px}
       .arrow-out {width:51px; height:98px; background-position: -1px -1px}
       .frame {width:73px; height:74px; background-position: -147px -80px}
@@ -52,15 +52,15 @@ class PackScssTest < Minitest::Test
 
     expected_output0 = <<~STRING
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:0e3cde37abc2d6283d832d64fcab33a3:c1d35c5361d7a9ec65c17d37456c5ef2:020bd24e3165ccf6122edbac54bb505b$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
     STRING
 
@@ -244,19 +244,19 @@ class PackScssTest < Minitest::Test
     output_paths_mapping = { nil => 'packed' }
     content = <<~STRING
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:0e3cde37abc2d6283d832d64fcab33a3:c1d35c5361d7a9ec65c17d37456c5ef2:020bd24e3165ccf6122edbac54bb505b$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
-      
+
       .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed.png);}
-      
+
       .title_tw {width:50px; height:40px; background-position: -240px -280px}
       .title_cn {width:50px; height:40px; background-position: -240px -300px}
       .title_en {width:50px; height:40px; background-position: -240px -320px}
@@ -266,15 +266,15 @@ class PackScssTest < Minitest::Test
 
     expected_output0 = <<~STRING
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:0e3cde37abc2d6283d832d64fcab33a3:c1d35c5361d7a9ec65c17d37456c5ef2:020bd24e3165ccf6122edbac54bb505b$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
     STRING
 
@@ -306,19 +306,19 @@ class PackScssTest < Minitest::Test
     output_paths_mapping = { nil => 'packed' }
     content = <<~STRING
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:0e3cde37abc2d6283d832d64fcab33a3:c1d35c5361d7a9ec65c17d37456c5ef2:020bd24e3165ccf6122edbac54bb505b$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
-      
+
       .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed.png);}
-      
+
       .title-tw {width:50px; height:40px; background-position: -240px -280px}
       .title-cn {width:50px; height:40px; background-position: -240px -300px}
       .title-en {width:50px; height:40px; background-position: -240px -320px}
@@ -328,15 +328,15 @@ class PackScssTest < Minitest::Test
 
     expected_output0 = <<~STRING
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:0e3cde37abc2d6283d832d64fcab33a3:c1d35c5361d7a9ec65c17d37456c5ef2:020bd24e3165ccf6122edbac54bb505b$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
     STRING
 
@@ -364,19 +364,19 @@ class PackScssTest < Minitest::Test
     output_paths_mapping = { 'tw' => 'packed_tw', 'cn' => 'packed_cn', 'en' => 'packed_en' }
     content = <<~STRING
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:2cd54dfedabf543debe2795e2051379e:1a63a530863691503d3bf5b96866cada:ece2d26d0a976541d891f10f7c1a6c5e$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
-      
+
       .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_tw.png);}
-      
+
       .exam-tw {width:151px; height:61px; background-position: -1px -1px}
       .official_beige-tw {width:151px; height:61px; background-position: -154px -1px}
       .official_blue-tw {width:151px; height:61px; background-position: -307px -1px}
@@ -386,19 +386,19 @@ class PackScssTest < Minitest::Test
       .video_blue-tw {width:151px; height:61px; background-position: -919px -1px}
 
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:2cd54dfedabf543debe2795e2051379e:1a63a530863691503d3bf5b96866cada:ece2d26d0a976541d891f10f7c1a6c5e$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
-      
+
       .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_cn.png);}
-      
+
       .exam-cn {width:151px; height:61px; background-position: -1px -1px}
       .official_beige-cn {width:151px; height:61px; background-position: -154px -1px}
       .official_blue-cn {width:151px; height:61px; background-position: -307px -1px}
@@ -408,19 +408,19 @@ class PackScssTest < Minitest::Test
       .video_blue-cn {width:151px; height:61px; background-position: -919px -1px}
 
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:2cd54dfedabf543debe2795e2051379e:1a63a530863691503d3bf5b96866cada:ece2d26d0a976541d891f10f7c1a6c5e$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
-      
+
       .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_en.png);}
-      
+
       .exam-en {width:151px; height:61px; background-position: -1px -1px}
       .official_beige-en {width:151px; height:61px; background-position: -154px -1px}
       .official_blue-en {width:151px; height:61px; background-position: -307px -1px}
@@ -434,15 +434,15 @@ class PackScssTest < Minitest::Test
 
     expected_output0 = <<~STRING
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:2cd54dfedabf543debe2795e2051379e:1a63a530863691503d3bf5b96866cada:ece2d26d0a976541d891f10f7c1a6c5e$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
     STRING
 
@@ -492,19 +492,19 @@ class PackScssTest < Minitest::Test
 
     content = <<~STRING
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:82fcb055ddeee0e6dbf5d1f69ebb4c69:c98b6be795491c5582285ea45c8901bd:d3a998f8a0a3d65c7be2f2d49f86c396$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
-      
+
       .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_tw.png);}
-      
+
       .exam-tw {width:151px; height:61px; background-position: -1px -1px}
       .official_beige-tw {width:151px; height:61px; background-position: -154px -1px}
       .official_blue-tw {width:151px; height:61px; background-position: -307px -1px}
@@ -514,19 +514,19 @@ class PackScssTest < Minitest::Test
       .video_blue-tw {width:151px; height:61px; background-position: -919px -1px}
 
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:82fcb055ddeee0e6dbf5d1f69ebb4c69:c98b6be795491c5582285ea45c8901bd:d3a998f8a0a3d65c7be2f2d49f86c396$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
-      
+
       .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_tw_m.png);}
-      
+
       .official_beige-tw-m {width:101px; height:69px; background-position: -1px -1px}
       .official_blue-tw-m {width:101px; height:69px; background-position: -1px -72px}
       .player_beige-tw-m {width:101px; height:69px; background-position: -1px -143px}
@@ -536,19 +536,19 @@ class PackScssTest < Minitest::Test
 
 
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:82fcb055ddeee0e6dbf5d1f69ebb4c69:c98b6be795491c5582285ea45c8901bd:d3a998f8a0a3d65c7be2f2d49f86c396$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
-      
+
       .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_cn.png);}
-      
+
       .exam-cn {width:151px; height:61px; background-position: -1px -1px}
       .official_beige-cn {width:151px; height:61px; background-position: -154px -1px}
       .official_blue-cn {width:151px; height:61px; background-position: -307px -1px}
@@ -558,19 +558,19 @@ class PackScssTest < Minitest::Test
       .video_blue-cn {width:151px; height:61px; background-position: -919px -1px}
 
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:82fcb055ddeee0e6dbf5d1f69ebb4c69:c98b6be795491c5582285ea45c8901bd:d3a998f8a0a3d65c7be2f2d49f86c396$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
-      
+
       .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_cn_m.png);}
-      
+
       .official_beige-cn-m {width:101px; height:69px; background-position: -1px -1px}
       .official_blue-cn-m {width:101px; height:69px; background-position: -1px -72px}
       .player_beige-cn-m {width:101px; height:69px; background-position: -1px -143px}
@@ -584,15 +584,15 @@ class PackScssTest < Minitest::Test
 
     expected_output0 = <<~STRING
       /* ----------------------------------------------------
-         created with http://www.codeandweb.com/texturepacker 
+         created with http://www.codeandweb.com/texturepacker
          ----------------------------------------------------
          $TexturePacker:SmartUpdate:82fcb055ddeee0e6dbf5d1f69ebb4c69:c98b6be795491c5582285ea45c8901bd:d3a998f8a0a3d65c7be2f2d49f86c396$
          ----------------------------------------------------
-      
+
          usage: <span class="{-spritename-} sprite"></span>
-      
+
          replace {-spritename-} with the sprite you like to use
-      
+
       */
     STRING
 

@@ -12,11 +12,11 @@ class TexturePacker::Cli::Options
         @hook_run = ->{ puts(TexturePacker::VERSION) }
       end
 
-      opts.on("-h", "--help", "Prints this help") do
+      opts.on('-h', '--help', 'Prints this help') do
         @hook_run = ->{ puts(opts) }
       end
 
-      opts.on("-pPATH", "--project_dir=PATH", "Copy the generated scss files / images to specified project") do |val|
+      opts.on('-pPATH', '--project_dir=PATH', 'Copy the generated scss files / images to specified project') do |val|
         @project_dir = val
       end
     end.parse!(argv)
