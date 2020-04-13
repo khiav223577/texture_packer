@@ -109,7 +109,7 @@ class TexturePacker
 
   def extract_rule!
     @content.sub!(/^\.([a-zA-Z0-9_-]+)((?:\:\w+|\[\w+\])*) \{(.*?)\}/, '') # 抓 rule
-    return [Regexp.last_match(1), Regexp.last_match(2), Regexp.last_match(3)] # $1 = selector, $2 = prefix, $3 = css
+    return [$1, $2, $3] # $1 = selector, $2 = prefix, $3 = css
   end
 
   def get_mixin(func, css)
