@@ -539,7 +539,7 @@ Style/EndBlock:
 Layout/EndOfLine:
   Description: 'Use Unix-style line endings.'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#crlf'
-  Enabled: true
+  Enabled: false
 
 Style/EvenOdd:
   Description: 'Favor the use of Fixnum#even? && Fixnum#odd?'
@@ -560,14 +560,14 @@ Layout/InitialIndentation:
     Checks the indentation of the first non-blank non-comment line in a file.
   Enabled: true
 
-Layout/FirstParameterIndentation:
+Layout/FirstArgumentIndentation:
   Description: 'Checks the indentation of the first parameter in a method call.'
   Enabled: true
 
 Lint/FlipFlop:
   Description: 'Checks for flip flops'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#no-flip-flops'
-  Enabled: true
+  Enabled: false
 
 Style/For:
   Description: 'Checks use of for or each in multiline loops.'
@@ -883,11 +883,11 @@ Style/SingleLineBlockParams:
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#reduce-blocks'
   Methods:
     - reduce:
-        - acc
-        - elem
+        - sum
+        - v
     - inject:
-        - acc
-        - elem
+        - sum
+        - v
   Enabled: true
 
 Style/SingleLineMethods:
