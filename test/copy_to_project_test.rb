@@ -29,6 +29,20 @@ class CopyToProjectTest < Minitest::Test
     @cli.send(:write_to_project_dir!, @packer, 'fake_output2', 'fake_output3')
   end
 
+  def test_need_global_mixins
+    split_type = TexturePacker::SPLIT_BY_MOBILE
+    assert_equal true, TexturePacker.new('side_menu_ocean', {}, '', split_type).need_global_mixins?
+
+    split_type = TexturePacker::SPLIT_BY_I18N
+    assert_equal false, TexturePacker.new('side_menu_ocean', {}, '', split_type).need_global_mixins?
+
+    split_type = TexturePacker::SPLIT_BY_I18N_AND_MOBILE
+    assert_equal true, TexturePacker.new('side_menu_ocean', {}, '', split_type).need_global_mixins?
+
+    split_type = nil
+    assert_equal false, TexturePacker.new('side_menu_ocean', {}, '', split_type).need_global_mixins?
+  end
+
   private
 
   def mock_write_to_project_dir

@@ -132,6 +132,7 @@ class TexturePacker
 
   def need_global_mixins?
     return true if @split_type == SPLIT_BY_MOBILE
+    return true if @split_type == SPLIT_BY_I18N_AND_MOBILE
     return false
   end
 
