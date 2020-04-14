@@ -1,5 +1,8 @@
 ## Change Log
 
+### [v1.6.2](https://github.com/khiav223577/texture_packer/compare/v1.6.1...v1.6.2) 2020/04/14
+- [#18](https://github.com/khiav223577/texture_packer/pull/18) Fix: it needs global mixins when split type is by i18n + mobile (@khiav223577)
+
 ### [v1.6.1](https://github.com/khiav223577/texture_packer/compare/v1.6.0...v1.6.1) 2020/04/13
 - [#17](https://github.com/khiav223577/texture_packer/pull/17) auto correct coding style by rubocop (@khiav223577)
 
