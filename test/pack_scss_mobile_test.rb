@@ -206,4 +206,73 @@ class PackScssMobileTest < Minitest::Test
     assert_equal expected_output1, output1
     assert_equal expected_output2, output2
   end
+
+  def test_selector_order # should order as the following :hover, :active, :disabled
+    output_paths_mapping = { 'm' => 'packed_m', nil => 'packed' }
+    content = <<~STRING
+      /* ----------------------------------------------------
+         created with http://www.codeandweb.com/texturepacker 
+         ----------------------------------------------------
+         $TexturePacker:SmartUpdate:34ea7ee7d1f3145bef5a436293db74fe:8e5b46ee74783a269b7905a8f4cebce1:34c6c509e026266855d73b8f98e71a2d$
+         ----------------------------------------------------
+      
+         usage: <span class="{-spritename-} sprite"></span>
+      
+         replace {-spritename-} with the sprite you like to use
+      
+      */
+      .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed.png);}
+
+      .down_arrow {width:57px; height:57px; background-position: -585px -1px}
+      .down_arrow:active {width:57px; height:57px; background-position: -408px -1px}
+      .down_arrow:hover {width:57px; height:57px; background-position: -526px -1px}
+      .down_arrow-disabled {width:57px; height:57px; background-position: -467px -1px}
+
+
+      .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_m.png);}
+
+      .down_arrow-disabled-m {width:61px; height:61px; background-position: -190px -1px}
+      .down_arrow-hover-m {width:61px; height:61px; background-position: -253px -1px}
+      .down_arrow-active-m {width:61px; height:61px; background-position: -127px -1px}
+      .down_arrow-m {width:61px; height:61px; background-position: -253px -1px}
+    STRING
+
+    packer = TexturePacker.new('reading_control_list_ocean', output_paths_mapping, content, @split_type)
+
+    expected_output0 = <<~STRING
+      /* ----------------------------------------------------
+         created with http://www.codeandweb.com/texturepacker 
+         ----------------------------------------------------
+         $TexturePacker:SmartUpdate:34ea7ee7d1f3145bef5a436293db74fe:8e5b46ee74783a269b7905a8f4cebce1:34c6c509e026266855d73b8f98e71a2d$
+         ----------------------------------------------------
+      
+         usage: <span class="{-spritename-} sprite"></span>
+      
+         replace {-spritename-} with the sprite you like to use
+      
+      */
+    STRING
+
+    expected_output1 = <<~STRING
+      @mixin reading_control_list_ocean_sprite_m{ background-image: image-url('reading_control_list_ocean_m.png'); }
+      @mixin reading_control_list_ocean_sprite{ background-image: image-url('reading_control_list_ocean.png'); }
+      @mixin reading_control_list_ocean_down_arrow{ width:57px; height:57px; background-position: -585px -1px; &:active, &.active{ width:57px; height:57px; background-position: -408px -1px; @include mobile{ width:61px; height:61px; background-position: -127px -1px; } }&:hover, &.hover{ width:57px; height:57px; background-position: -526px -1px; @include mobile{ width:61px; height:61px; background-position: -253px -1px; } }&:disabled, &.disabled{ width:57px; height:57px; background-position: -467px -1px; @include mobile{ width:61px; height:61px; background-position: -190px -1px; } }@include mobile{ width:61px; height:61px; background-position: -253px -1px; } }
+    STRING
+
+    expected_output2 = <<~STRING
+      body[theme='ocean']{
+        .reading_control_list_sprite{
+          @include desktop{ @include reading_control_list_ocean_sprite; }
+          @include mobile{ @include reading_control_list_ocean_sprite_m; }
+          &.down_arrow { @include reading_control_list_ocean_down_arrow; }
+        }
+      }
+    STRING
+
+    output0, output1, output2 = packer.parse!
+    puts output1
+    assert_equal expected_output0, output0
+    assert_equal expected_output1, output1
+    assert_equal expected_output2, output2
+  end
 end
