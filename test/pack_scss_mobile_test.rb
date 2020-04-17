@@ -162,8 +162,7 @@ class PackScssMobileTest < Minitest::Test
 
 
       .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(packed_m.png);}
-     
-      .down_arrow-active-hover-m {width:61px; height:61px; background-position: -127px -1px}
+
       .down_arrow-active-m {width:61px; height:61px; background-position: -127px -1px}
       .down_arrow-disabled-m {width:61px; height:61px; background-position: -190px -1px}
       .down_arrow-hover-m {width:61px; height:61px; background-position: -253px -1px}
@@ -189,7 +188,7 @@ class PackScssMobileTest < Minitest::Test
     expected_output1 = <<~STRING
       @mixin reading_control_list_ocean_sprite_m{ background-image: image-url('reading_control_list_ocean_m.png'); }
       @mixin reading_control_list_ocean_sprite{ background-image: image-url('reading_control_list_ocean.png'); }
-      @mixin reading_control_list_ocean_down_arrow{ width:57px; height:57px; background-position: -585px -1px; &:hover, &.hover{ width:57px; height:57px; background-position: -526px -1px; @include mobile{ width:61px; height:61px; background-position: -253px -1px; } }&:active, &.active{ width:57px; height:57px; background-position: -408px -1px; &:hover, &.hover{  @include mobile{ width:61px; height:61px; background-position: -127px -1px; } }@include mobile{ width:61px; height:61px; background-position: -127px -1px; } }&:disabled, &.disabled{ width:57px; height:57px; background-position: -467px -1px; @include mobile{ width:61px; height:61px; background-position: -190px -1px; } }@include mobile{ width:61px; height:61px; background-position: -253px -1px; } }
+      @mixin reading_control_list_ocean_down_arrow{ width:57px; height:57px; background-position: -585px -1px; &:hover, &.hover{ width:57px; height:57px; background-position: -526px -1px; @include mobile{ width:61px; height:61px; background-position: -253px -1px; } }&:active, &.active{ width:57px; height:57px; background-position: -408px -1px; @include mobile{ width:61px; height:61px; background-position: -127px -1px; } }&:disabled, &.disabled{ width:57px; height:57px; background-position: -467px -1px; @include mobile{ width:61px; height:61px; background-position: -190px -1px; } }@include mobile{ width:61px; height:61px; background-position: -253px -1px; } }
     STRING
 
     expected_output2 = <<~STRING
