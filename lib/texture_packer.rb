@@ -11,6 +11,7 @@ class TexturePacker
   SPLIT_BY_MOBILE          = 'mobile'
   SPLIT_BY_I18N            = 'i18n'
   SPLIT_BY_I18N_AND_MOBILE = 'i18n_and_mobile'
+  SELECTOR_ORDER = %w[:hover :active :disabled].freeze
 
   def initialize(dir_name, output_paths_mapping, content, split_type = nil)
     @output_paths_mapping = output_paths_mapping
@@ -151,7 +152,7 @@ class TexturePacker
     end
 
     def generate_css
-      inner_css = @hash.map do |prefix, obj|
+      inner_css = @hash.sort_by{|prefix, obj| SELECTOR_ORDER.index(prefix) || SELECTOR_ORDER.size }.map do |prefix, obj|
         case prefix
         when nil, ''
           [obj.generate_css]
