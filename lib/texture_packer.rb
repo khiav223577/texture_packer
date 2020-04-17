@@ -42,9 +42,10 @@ class TexturePacker
       prefixs = string_prefix.scan(/\[\w+\]|\:\w+/) # [m]:disabled => ['[m]', ':disabled']
       prefixs.map! do |prefix|
         case prefix
-        when '[active]' then ':active' # 因為 TexturePacker 會把 xxx-active-hover 轉成 xxx-active:hover 而不是 xxx:active:hover
-        when '[hover]'  then ':hover'
-        else                 prefix
+        when '[active]'   then ':active' # 因為 TexturePacker 會把 xxx-active-hover 轉成 xxx-active:hover 而不是 xxx:active:hover
+        when '[hover]'    then ':hover'
+        when '[disabled]' then ':disabled'
+        else                   prefix
         end
       end
       # p [selector, prefix, css]
