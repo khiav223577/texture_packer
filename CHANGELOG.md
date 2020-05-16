@@ -1,5 +1,11 @@
 ## Change Log
 
+### [v1.7.0](https://github.com/khiav223577/texture_packer/compare/v1.6.3...v1.7.0) 2020/04/17
+- [#20](https://github.com/khiav223577/texture_packer/pull/20) Make sure some selector ordered as specified (@khiav223577)
+
+### [v1.6.3](https://github.com/khiav223577/texture_packer/compare/v1.6.2...v1.6.3) 2020/04/17
+- [#19](https://github.com/khiav223577/texture_packer/pull/19) Fix: It will generate wrong scss where there is an image named `xxx-disabled-m` (@khiav223577)
+
 ### [v1.6.2](https://github.com/khiav223577/texture_packer/compare/v1.6.1...v1.6.2) 2020/04/14
 - [#18](https://github.com/khiav223577/texture_packer/pull/18) Fix: it needs global mixins when split type is by i18n + mobile (@khiav223577)
 
