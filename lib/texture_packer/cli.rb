@@ -41,7 +41,7 @@ class TexturePacker::Cli
     split_type = case
                  when File.exist?('packed_tw_m.css') ; TexturePacker::SPLIT_BY_I18N_AND_MOBILE
                  when File.exist?('packed_m.css')    ; TexturePacker::SPLIT_BY_MOBILE
-                 when File.exist?('packed_tw.css')   ; TexturePacker::SPLIT_I18N
+                 when File.exist?('packed_tw.css')   ; TexturePacker::SPLIT_BY_I18N
                  end
 
     # 由路徑計算 class 名字
