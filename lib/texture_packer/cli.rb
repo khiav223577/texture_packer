@@ -37,18 +37,20 @@ class TexturePacker::Cli
     end
   end
 
-  def create_packer
-    split_type = case
-                 when File.exist?('packed_tw_m.css') ; TexturePacker::SPLIT_BY_I18N_AND_MOBILE
-                 when File.exist?('packed_m.css')    ; TexturePacker::SPLIT_BY_MOBILE
-                 when File.exist?('packed_tw.css')   ; TexturePacker::SPLIT_BY_I18N
-                 end
+  def calculate_split_type
+    case
+    when File.exist?('packed_tw_m.css') ; return TexturePacker::SPLIT_BY_I18N_AND_MOBILE
+    when File.exist?('packed_m.css')    ; return TexturePacker::SPLIT_BY_MOBILE
+    when File.exist?('packed_tw.css')   ; return TexturePacker::SPLIT_BY_I18N
+    end
+  end
 
+  def create_packer
     # 由路徑計算 class 名字
     dir_name = File.expand_path(Dir.pwd).gsub(%r{.*/Texture-Packer/.*?/(.*)}, '\1')
 
     content = output_paths_mapping.map{|_, path| File.read("#{path}.css") }.join
-    return TexturePacker.new(dir_name, output_paths_mapping, content, split_type)
+    return TexturePacker.new(dir_name, output_paths_mapping, content, calculate_split_type)
   end
 
   def output_paths_mapping
