@@ -1,8 +1,8 @@
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start 'test_frameworks'
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'texture_packer'
 
+require 'texture_packer'
 require 'minitest/autorun'
 require 'mocha/minitest'
