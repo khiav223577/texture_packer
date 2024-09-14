@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'texture_packer'
   spec.version       = TexturePacker::VERSION
   spec.authors       = ['khiav reoy']
-  spec.email         = ['mrtmrt15xn@yahoo.com.tw']
+  spec.email         = ['khiav223577@gmail.com']
 
   spec.summary       = 'texture packer'
   spec.description   = 'texture packer'
